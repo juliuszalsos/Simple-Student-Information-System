@@ -6,55 +6,55 @@ public class Student{
     private String yearLevel;
     private String gender;
 
-    private void setStudentID(String ID){
+    public void setStudentID(String ID){
         this.id = ID;
     } 
 
-    private String getStudentID(){
+    public String getStudentID(){
         return id;
     }
 
-    private void setStudentfirstName(String firstname){
+    public void setStudentfirstName(String firstname){
         this.firstName = firstname;
     }
 
-    private String getStudentfirstName(){
+    public String getStudentfirstName(){
         return firstName;
     }
 
-    private void setStudentlastName(String lastname){
-        this.lastName = lasstname;
+    public void setStudentlastName(String lastname){
+        this.lastName = lastname;
     }
 
-    private String getStudentlastName(){
+    public String getStudentlastName(){
         return lastName;
     }
 
-    private void setStudentProgramCode(String PCode){
+    public void setStudentProgramCode(String PCode){
         this.programCode = PCode;
     }
 
-    private String getStudentProgramCode(){
+    public String getStudentProgramCode(){
         return programCode;
     }
 
-    private void setStudentYearLevel(String level){
+    public void setStudentYearLevel(String level){
         this.yearLevel = level;
     }
 
-    private String getStudentYearLevel(){
+    public String getStudentYearLevel(){
         return yearLevel;
     }
 
-    private void setStudentGender(String gender){
+    public void setStudentGender(String gender){
         this.gender = gender;
     }
 
-    private String getStudentGender(){
+    public String getStudentGender(){
         return gender;
     }
 
-    private Student(String id, String firstName, String lastName,String code, String level, String gender){
+    public Student(String id, String firstName, String lastName,String code, String level, String gender){
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -62,7 +62,10 @@ public class Student{
         this.yearLevel = level;
         this.gender = gender;
     }
+    
+    public Student(){
 
+    }
 
 
 }
