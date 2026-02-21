@@ -1,3 +1,5 @@
+package info;
+
 public class Program {
     private String programName;
     private String programCode;

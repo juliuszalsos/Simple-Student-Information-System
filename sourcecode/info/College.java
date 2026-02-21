@@ -1,3 +1,5 @@
+package info;
+
 public class College {
 
     private String collegeCode;
