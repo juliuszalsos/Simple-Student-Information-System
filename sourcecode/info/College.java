@@ -5,23 +5,23 @@ public class College {
     private String collegeCode;
     private String collegeName;
 
-    private void setCCode(String code){
+    public void setCCode(String code){
         this.collegeCode = code;
     } 
 
-    private String getCCode(){
+    public String getCCode(){
         return collegeCode;
     }
 
-    private void setCName(String name){
+    public void setCName(String name){
         this.collegeName = name;
     }
 
-    private String getCName(){
+    public String getCName(){
         return collegeName;
     }
 
-    private College(String name, String code){
+    public College(String name, String code){
         this.collegeName = name;
         this.collegeCode = code;
     }
