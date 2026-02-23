@@ -39,7 +39,7 @@ public class programeditor extends AbstractCellEditor implements TableCellEditor
                     "Program Name:", f2
                 };
 
-                int option = JOptionPane.showConfirmDialog(null, message, "Update Student", JOptionPane.OK_CANCEL_OPTION);
+                int option = JOptionPane.showConfirmDialog(null, message, "Update Program", JOptionPane.OK_CANCEL_OPTION);
                 if (option == JOptionPane.OK_OPTION) {
                     model.setValueAt(f1.getText(), row, 0);
                     model.setValueAt(f2.getText(), row, 1);
@@ -52,7 +52,7 @@ public class programeditor extends AbstractCellEditor implements TableCellEditor
         deleteProgram.addActionListener(e -> {
             int row = table.getSelectedRow();
             if (row != -1) {
-                int confirm = JOptionPane.showConfirmDialog(null, "Are you sure you want to delete this student?", "Confirm Delete", JOptionPane.YES_NO_OPTION);
+                int confirm = JOptionPane.showConfirmDialog(null, "Are you sure you want to delete this program?", "Confirm Delete", JOptionPane.YES_NO_OPTION);
                 if (confirm == JOptionPane.YES_OPTION) {
                     model.removeRow(row);
                     updateProgramInfo(model); 
@@ -95,7 +95,7 @@ public class programeditor extends AbstractCellEditor implements TableCellEditor
     }
 
     private void updateProgramInfo(DefaultTableModel model) {
-        try (java.io.PrintWriter out = new java.io.PrintWriter(new java.io.FileWriter("sourcecode/csvfiles/Student.csv"))) {
+        try (java.io.PrintWriter out = new java.io.PrintWriter(new java.io.FileWriter("sourcecode/csvfiles/Program.csv"))) {
             for (int i = 0; i < model.getRowCount(); i++) {
                 String rowString = String.join(",", 
                     model.getValueAt(i, 0).toString(),

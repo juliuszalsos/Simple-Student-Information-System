@@ -125,7 +125,28 @@ private JTextField tfId, tfFirstName, tfLastName, tfProgram, tfYear, tfGender;
             JOptionPane.showMessageDialog(null, "Please fill in all required fields!");
             return;
             }
-
+            if (firstName.matches(".*\\d.*") || lastName.matches(".*\\d.*")) {
+        JOptionPane.showMessageDialog(null, "Names cannot contain numbers!");
+        return;
+    }
+        if (!id.matches("20\\d{2}-\\d{4}")) {
+            JOptionPane.showMessageDialog(null, "Invalid ID format! Use 20XX-XXXX (e.g., 2024-0018)");
+            return;
+        }
+        try {
+            int yr = Integer.parseInt(year);
+            if (yr < 1 || yr > 4) {
+                JOptionPane.showMessageDialog(null, "Year level must be between 1 and 4!");
+                return;
+            }
+        } catch (NumberFormatException ex) {
+            JOptionPane.showMessageDialog(null, "Year level must be a number!");
+            return;
+        }
+        if (!isProgramValid(program)) {
+            JOptionPane.showMessageDialog(null, "The Program Code '" + program + "' does not exist in our records!");
+            return;
+        }
 
             saveData(id, firstName, lastName, program, year, gender);
             loadData();
@@ -177,5 +198,19 @@ private JTextField tfId, tfFirstName, tfLastName, tfProgram, tfYear, tfGender;
     } catch (java.io.IOException e) {
         System.out.println("No existing database found or error reading file.");
         }
+    }
+    private boolean isProgramValid(String programCode) {
+    String line;
+    try (java.io.BufferedReader br = new java.io.BufferedReader(new java.io.FileReader("sourcecode/csvfiles/Program.csv"))) {
+        while ((line = br.readLine()) != null) {
+            String[] data = line.split(",");
+            if (data.length > 0 && data[0].equalsIgnoreCase(programCode)) {
+                return true; 
+            }
+        }
+    } catch (java.io.IOException e) {
+        System.out.println("Could not read Program.csv for validation, Input your program code first.");
+    }
+    return false;
     }
 }

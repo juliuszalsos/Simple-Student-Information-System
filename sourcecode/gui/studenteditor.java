@@ -25,45 +25,78 @@ public class studenteditor extends AbstractCellEditor implements TableCellEditor
         JMenuItem updateStudent = new JMenuItem("Update Information");
 
         updateStudent.addActionListener(e -> {
-            int row = table.getSelectedRow();
-            if (row != -1) {
-                String id = model.getValueAt(row, 0).toString();
-                String fn = model.getValueAt(row, 1).toString();
-                String ln = model.getValueAt(row, 2).toString();
-                String pr = model.getValueAt(row, 3).toString();
-                String yr = model.getValueAt(row, 4).toString();
-                String gn = model.getValueAt(row, 5).toString();
+    int row = table.getSelectedRow();
+    if (row != -1) {
+        String id = model.getValueAt(row, 0).toString();
+        String fn = model.getValueAt(row, 1).toString();
+        String ln = model.getValueAt(row, 2).toString();
+        String pr = model.getValueAt(row, 3).toString();
+        String yr = model.getValueAt(row, 4).toString();
+        String gn = model.getValueAt(row, 5).toString();
 
-                JTextField f1 = new JTextField(id);
-                JTextField f2 = new JTextField(fn);
-                JTextField f3 = new JTextField(ln);
-                JTextField f4 = new JTextField(pr);
-                JTextField f5 = new JTextField(yr);
-                JTextField f6 = new JTextField(gn);
+        JTextField f1 = new JTextField(id);
+        JTextField f2 = new JTextField(fn);
+        JTextField f3 = new JTextField(ln);
+        JTextField f4 = new JTextField(pr);
+        JTextField f5 = new JTextField(yr);
+        JTextField f6 = new JTextField(gn);
 
-                Object[] message = {
-                    "Student ID:", f1,
-                    "First Name:", f2,
-                    "Last Name:", f3,
-                    "Program:", f4,
-                    "Year:", f5,
-                    "Gender:", f6
-                };
+        Object[] message = {
+            "Student ID:", f1,
+            "First Name:", f2,
+            "Last Name:", f3,
+            "Program:", f4,
+            "Year:", f5,
+            "Gender:", f6
+        };
 
-                int option = JOptionPane.showConfirmDialog(null, message, "Update Student", JOptionPane.OK_CANCEL_OPTION);
-                if (option == JOptionPane.OK_OPTION) {
-                    model.setValueAt(f1.getText(), row, 0);
-                    model.setValueAt(f2.getText(), row, 1);
-                    model.setValueAt(f3.getText(), row, 2);
-                    model.setValueAt(f4.getText(), row, 3);
-                    model.setValueAt(f5.getText(), row, 4);
-                    model.setValueAt(f6.getText(), row, 5);
-                    
-                    updateStudentInfo(model);
-                    JOptionPane.showMessageDialog(null, "Student Updated Successfully");
-                }
+        int option = JOptionPane.showConfirmDialog(null, message, "Update Student", JOptionPane.OK_CANCEL_OPTION);
+        if (option == JOptionPane.OK_OPTION) {
+            String newId = f1.getText().trim();
+            String newFn = f2.getText().trim();
+            String newLn = f3.getText().trim();
+            String newPr = f4.getText().trim();
+            String newYr = f5.getText().trim();
+
+            if (newId.isEmpty() || newFn.isEmpty() || newLn.isEmpty()) {
+                JOptionPane.showMessageDialog(null, "Required fields cannot be empty!");
+                return;
             }
-        });
+            if (newFn.matches(".*\\d.*") || newLn.matches(".*\\d.*")) {
+                JOptionPane.showMessageDialog(null, "Names cannot contain numbers!");
+                return;
+            }
+            if (!newId.matches("20\\d{2}-\\d{4}")) {
+                JOptionPane.showMessageDialog(null, "Invalid ID format! Use 20XX-XXXX");
+                return;
+            }
+            try {
+                int yearVal = Integer.parseInt(newYr);
+                if (yearVal < 1 || yearVal > 4) {
+                    JOptionPane.showMessageDialog(null, "Year must be 1-4!");
+                    return;
+                }
+            } catch (NumberFormatException ex) {
+                JOptionPane.showMessageDialog(null, "Year must be a number!");
+                return;
+            }
+            if (!isProgramValid(newPr)) {
+                JOptionPane.showMessageDialog(null, "Program code '" + newPr + "' does not exist!");
+                return;
+            }
+
+            model.setValueAt(newId, row, 0);
+            model.setValueAt(newFn, row, 1);
+            model.setValueAt(newLn, row, 2);
+            model.setValueAt(newPr, row, 3);
+            model.setValueAt(newYr, row, 4);
+            model.setValueAt(f6.getText(), row, 5);
+            
+            updateStudentInfo(model);
+            JOptionPane.showMessageDialog(null, "Student Updated Successfully");
+        }
+    }
+});
 
         deleteStudent.addActionListener(e -> {
             int row = table.getSelectedRow();
@@ -127,4 +160,18 @@ public class studenteditor extends AbstractCellEditor implements TableCellEditor
             JOptionPane.showMessageDialog(null, "Error updating CSV: " + ex.getMessage());
         }
     }
+    private boolean isProgramValid(String programCode) {
+    String line;
+    try (java.io.BufferedReader br = new java.io.BufferedReader(new java.io.FileReader("sourcecode/csvfiles/Program.csv"))) {
+        while ((line = br.readLine()) != null) {
+            String[] data = line.split(",");
+            if (data.length > 0 && data[0].equalsIgnoreCase(programCode)) {
+                return true; 
+            }
+        }
+    } catch (java.io.IOException e) {
+        return false; 
+    }
+    return false;
+}
 }
