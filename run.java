@@ -2,7 +2,6 @@ import gui.studentinterface;
 import gui.programinterface;
 import gui.collegeinterface;
 import javax.swing.*;
-import java.awt.*;
 
 public class run {
 public static void main(String[] args) {
@@ -18,13 +17,5 @@ public static void main(String[] args) {
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
         frame.setVisible(true);
-        
-        
-        /*frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        
-        interfacer panel = new interfacer();        
-        frame.add(panel);
-        frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
-        frame.setVisible(true);*/
     }
 }

@@ -25,37 +25,56 @@ public class studenteditor extends AbstractCellEditor implements TableCellEditor
         JMenuItem updateStudent = new JMenuItem("Update Information");
 
         updateStudent.addActionListener(e -> {
-    int row = table.getSelectedRow();
-    if (row != -1) {
+    int viewrow = table.getSelectedRow();
+    if (viewrow != -1) {
+        int row = table.convertRowIndexToModel(viewrow);
         String id = model.getValueAt(row, 0).toString();
         String fn = model.getValueAt(row, 1).toString();
         String ln = model.getValueAt(row, 2).toString();
         String pr = model.getValueAt(row, 3).toString();
         String yr = model.getValueAt(row, 4).toString();
-        String gn = model.getValueAt(row, 5).toString();
+        String[] genders = {"Male", "Female", "Other"};
+        JComboBox<String> genderBox = new JComboBox<>(genders);
+        
+        String currentGender = model.getValueAt(row, 5).toString();
+        if (currentGender.equals("Male") || currentGender.equals("Female")) {
+            genderBox.setSelectedItem(currentGender);
+        } else {
+            genderBox.setSelectedItem("Other");
+        }
 
         JTextField f1 = new JTextField(id);
         JTextField f2 = new JTextField(fn);
         JTextField f3 = new JTextField(ln);
         JTextField f4 = new JTextField(pr);
         JTextField f5 = new JTextField(yr);
-        JTextField f6 = new JTextField(gn);
-
         Object[] message = {
             "Student ID:", f1,
             "First Name:", f2,
             "Last Name:", f3,
             "Program:", f4,
             "Year:", f5,
-            "Gender:", f6
+            "Gender:", genderBox
         };
 
         int option = JOptionPane.showConfirmDialog(null, message, "Update Student", JOptionPane.OK_CANCEL_OPTION);
         if (option == JOptionPane.OK_OPTION) {
+            String selectedGender = (String) genderBox.getSelectedItem();
+            String finalGender = selectedGender;
+
+            if (selectedGender.equals("Other")) {
+                String customGender = JOptionPane.showInputDialog(null, "Please specify your gender:", "Specify Gender", JOptionPane.QUESTION_MESSAGE);
+                if (customGender != null && !customGender.trim().isEmpty()) {
+                    finalGender = customGender.trim();
+                } else {
+                    finalGender = "Other"; 
+                }
+            }
+        if (option == JOptionPane.OK_OPTION) {
             String newId = f1.getText().trim();
             String newFn = f2.getText().trim();
             String newLn = f3.getText().trim();
-            String newPr = f4.getText().trim();
+            String newPr = f4.getText().trim().toUpperCase();
             String newYr = f5.getText().trim();
 
             if (newId.isEmpty() || newFn.isEmpty() || newLn.isEmpty()) {
@@ -66,8 +85,8 @@ public class studenteditor extends AbstractCellEditor implements TableCellEditor
                 JOptionPane.showMessageDialog(null, "Names cannot contain numbers!");
                 return;
             }
-            if (!newId.matches("20\\d{2}-\\d{4}")) {
-                JOptionPane.showMessageDialog(null, "Invalid ID format! Use 20XX-XXXX");
+            if (!newId.matches("^20([01]\\d|2[0-6])-(?!0000)\\d{4}$")) {
+                JOptionPane.showMessageDialog(null, "Invalid ID format! Use 20XX-XXXX. The year also cannot exceed 2026 and ID cannot be 0000");
                 return;
             }
             try {
@@ -90,17 +109,18 @@ public class studenteditor extends AbstractCellEditor implements TableCellEditor
             model.setValueAt(newLn, row, 2);
             model.setValueAt(newPr, row, 3);
             model.setValueAt(newYr, row, 4);
-            model.setValueAt(f6.getText(), row, 5);
+            model.setValueAt(finalGender, row, 5);
             
             updateStudentInfo(model);
             JOptionPane.showMessageDialog(null, "Student Updated Successfully");
         }
     }
-});
+}}); 
 
         deleteStudent.addActionListener(e -> {
-            int row = table.getSelectedRow();
-            if (row != -1) {
+            int viewrow = table.getSelectedRow();
+            if (viewrow != -1) {
+                int row = table.convertRowIndexToModel(viewrow);
                 int confirm = JOptionPane.showConfirmDialog(null, "Are you sure you want to delete this student?", "Confirm Delete", JOptionPane.YES_NO_OPTION);
                 if (confirm == JOptionPane.YES_OPTION) {
                     model.removeRow(row);

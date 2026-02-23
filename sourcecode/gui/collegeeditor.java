@@ -25,8 +25,9 @@ public class collegeeditor extends AbstractCellEditor implements TableCellEditor
         JMenuItem updateCollege = new JMenuItem("Update Information");
 
         updateCollege.addActionListener(e -> {
-            int row = table.getSelectedRow();
-            if (row != -1) {
+            int viewrow = table.getSelectedRow();
+            if (viewrow != -1) {
+                int row = table.convertRowIndexToModel(viewrow);
                 String ccode = model.getValueAt(row, 0).toString();
                 String cname = model.getValueAt(row, 1).toString();
 
@@ -50,9 +51,10 @@ public class collegeeditor extends AbstractCellEditor implements TableCellEditor
         });
 
         deleteCollege.addActionListener(e -> {
-            int row = table.getSelectedRow();
-            if (row != -1) {
-                int confirm = JOptionPane.showConfirmDialog(null, "Are you sure you want to delete this student?", "Confirm Delete", JOptionPane.YES_NO_OPTION);
+            int viewrow = table.getSelectedRow();
+            if (viewrow != -1) {
+                int row = table.convertRowIndexToModel(viewrow);
+                int confirm = JOptionPane.showConfirmDialog(null, "Are you sure you want to delete this college?", "Confirm Delete", JOptionPane.YES_NO_OPTION);
                 if (confirm == JOptionPane.YES_OPTION) {
                     model.removeRow(row);
                     updateCollegeInfo(model); 

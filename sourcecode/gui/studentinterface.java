@@ -1,216 +1,198 @@
 package gui;
+
 import javax.swing.*;
+import javax.swing.border.*;
+import javax.swing.table.*;
 import java.awt.*;
-import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableColumn;
-
-
 
 public class studentinterface extends JPanel {
-public static void launch(String[] args){} 
-private JTextField tfId, tfFirstName, tfLastName, tfProgram, tfYear, tfGender;
+    private JTextField tfId, tfFirstName, tfLastName, tfProgram, tfYear;
+    private JComboBox<String> ddGender;
     private JTable studentTable;
     private DefaultTableModel tablemodel;
+    private JTextField tfSearch;
+    private TableRowSorter<DefaultTableModel> sorter;
+
+    private final Color PRIMARY_NAVY = new Color(44, 62, 80);
+    private final Color ACCENT_BLUE = new Color(52, 152, 219);
+    private final Color BG_LIGHT = new Color(245, 247, 250);
+    private final Color GRID_COLOR = new Color(210, 210, 210);
 
     public studentinterface() {
-        
         this.setLayout(new BorderLayout());
+        this.setBackground(BG_LIGHT);
 
         String[] columns = {"ID", "First Name", "Last Name", "Program", "Year", "Gender", ""};
-        tablemodel = new DefaultTableModel(columns, 0); 
+        tablemodel = new DefaultTableModel(columns, 0);
         studentTable = new JTable(tablemodel);
-        studentTable.setRowHeight(35);
+        studentTable.setRowHeight(32); 
+        studentTable.setShowGrid(true);
+        studentTable.setGridColor(GRID_COLOR);
+        studentTable.setSelectionBackground(new Color(210, 230, 250));
+        studentTable.setFont(new Font("Segoe UI", Font.PLAIN, 12));
+
+        JTableHeader header = studentTable.getTableHeader();
+        header.setPreferredSize(new Dimension(0, 35));
+        header.setFont(new Font("Segoe UI", Font.BOLD, 12));
+        header.setBackground(new Color(235, 238, 242));
+        header.setBorder(new LineBorder(GRID_COLOR));
+
         TableColumn actionColumn = studentTable.getColumnModel().getColumn(6);
         studenteditor actionEditor = new studenteditor(studentTable, tablemodel);
         actionColumn.setCellRenderer(actionEditor);
         actionColumn.setCellEditor(actionEditor);
-        actionColumn.setPreferredWidth(40);
-        actionColumn.setMaxWidth(40);
+        actionColumn.setMaxWidth(45);
 
-        JPanel listPanel = new JPanel(new BorderLayout());
-        listPanel.setBackground(Color.LIGHT_GRAY);
-        JScrollPane scrollPane = new JScrollPane(studentTable);
-        listPanel.add(scrollPane, BorderLayout.CENTER);
+        JPanel searchPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 15, 8));
+        searchPanel.setBackground(PRIMARY_NAVY);
+        
+        JLabel searchLabel = new JLabel("Search Student: ");
+        searchLabel.setForeground(Color.WHITE);
+        searchLabel.setFont(new Font("Segoe UI", Font.BOLD, 12));
 
-        JPanel createPanel = new JPanel(); 
-        createPanel.setBackground(Color.LIGHT_GRAY);
-        createPanel.setPreferredSize(new Dimension(800, 100));
-        createPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 20, 10));
-        createPanel.setLayout(new BorderLayout());
+        tfSearch = new JTextField(20);
+        tfSearch.setBorder(BorderFactory.createCompoundBorder(
+                new LineBorder(ACCENT_BLUE, 1), 
+                BorderFactory.createEmptyBorder(3, 5, 3, 5)));
+
+        searchPanel.add(searchLabel);
+        searchPanel.add(tfSearch);
+
+        JPanel createPanel = new JPanel(new BorderLayout());
+        createPanel.setBackground(Color.WHITE);
+        createPanel.setBorder(new MatteBorder(2, 0, 0, 0, PRIMARY_NAVY));
 
         JLabel titleLabel = new JLabel("REGISTER STUDENT");
-        titleLabel.setFont(new Font("SansSerif", Font.BOLD, 18));
-        titleLabel.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 0));
+        titleLabel.setFont(new Font("Segoe UI", Font.BOLD, 15));
+        titleLabel.setForeground(PRIMARY_NAVY);
+        titleLabel.setBorder(BorderFactory.createEmptyBorder(8, 20, 5, 0));
         createPanel.add(titleLabel, BorderLayout.NORTH);
 
         JPanel formContainer = new JPanel();
         formContainer.setLayout(new BoxLayout(formContainer, BoxLayout.Y_AXIS));
-        formContainer.setBackground(Color.LIGHT_GRAY);
+        formContainer.setBackground(Color.WHITE);
+        formContainer.setBorder(BorderFactory.createEmptyBorder(5, 20, 10, 20));
 
-        JPanel gridPanel1 = new JPanel(new GridLayout(1, 3, 5, 5));
-        gridPanel1.setBackground(Color.LIGHT_GRAY);
-        JPanel idGroup = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        idGroup.setOpaque(false); 
-        idGroup.add(new JLabel("Student ID: "));
-        tfId = new JTextField(15); 
-        idGroup.add(tfId);
-        gridPanel1.add(idGroup);
-
-        JPanel fnGroup = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        fnGroup.setOpaque(false);
-        fnGroup.add(new JLabel("First Name:"));
-        tfFirstName = new JTextField(15);
-        fnGroup.add(tfFirstName);
-        gridPanel1.add(fnGroup);
-
-        JPanel lnGroup = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        lnGroup.setOpaque(false);
-        lnGroup.add(new JLabel("Last Name: "));
-        tfLastName = new JTextField(15);
-        lnGroup.add(tfLastName);
-        gridPanel1.add(lnGroup);
-
-
-        JPanel gridPanel2 = new JPanel(new GridLayout(1, 3, 5, 5));
-        gridPanel2.setBackground(Color.LIGHT_GRAY);
-
-        JPanel progGroup = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        progGroup.setOpaque(false);
-        progGroup.add(new JLabel("Program:    "));
-        tfProgram = new JTextField(15);
-        progGroup.add(tfProgram);
-        gridPanel2.add(progGroup);
-
-        JPanel yearGroup = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        yearGroup.setOpaque(false);
-        yearGroup.add(new JLabel("Year:            "));
-        tfYear = new JTextField(15);
-        yearGroup.add(tfYear);
-        gridPanel2.add(yearGroup);
-
-        JPanel genGroup = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        genGroup.setOpaque(false);
-        genGroup.add(new JLabel("Gender:        "));
-        tfGender = new JTextField(15);
-        genGroup.add(tfGender);
-        gridPanel2.add(genGroup);
-
-        JPanel gridPanel3 = new JPanel(new GridLayout(1, 1, 5, 5));
-        gridPanel3.setBackground(Color.LIGHT_GRAY);
-        JPanel addStudent = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-        addStudent.setOpaque(false);
-        JButton addButton = new JButton("Add Student");
-        addButton.setFont(new Font("SansSerif", Font.BOLD, 14));
-        addButton.setPreferredSize(new Dimension(140, 20));
-        addStudent.add(addButton);
-        gridPanel3.add(addStudent);
-
-
-        formContainer.add(gridPanel1);
-        formContainer.add(gridPanel2);
-        formContainer.add(gridPanel3);
-
-
-        createPanel.add(formContainer, BorderLayout.CENTER);
+        JPanel grid1 = new JPanel(new GridLayout(1, 6, 10, 0));
+        grid1.setOpaque(false);
         
-        addButton.addActionListener(e -> {
-            String id = tfId.getText().trim();
-            String firstName = tfFirstName.getText().trim();
-            String lastName = tfLastName.getText().trim();
-            String program = tfProgram.getText().trim();
-            String year = tfYear.getText().trim();
-            String gender = tfGender.getText().trim();
+        tfId = createStyledField("ID:");
+        tfFirstName = createStyledField("First Name:");
+        tfLastName = createStyledField("Last Name:");
+        tfProgram = createStyledField("Program:");
+        tfYear = createStyledField("Year:");
 
-            if (id.isEmpty() || firstName.isEmpty() || lastName.isEmpty()) {
-            JOptionPane.showMessageDialog(null, "Please fill in all required fields!");
-            return;
-            }
-            if (firstName.matches(".*\\d.*") || lastName.matches(".*\\d.*")) {
-        JOptionPane.showMessageDialog(null, "Names cannot contain numbers!");
-        return;
-    }
-        if (!id.matches("20\\d{2}-\\d{4}")) {
-            JOptionPane.showMessageDialog(null, "Invalid ID format! Use 20XX-XXXX (e.g., 2024-0018)");
-            return;
-        }
-        try {
-            int yr = Integer.parseInt(year);
-            if (yr < 1 || yr > 4) {
-                JOptionPane.showMessageDialog(null, "Year level must be between 1 and 4!");
-                return;
-            }
-        } catch (NumberFormatException ex) {
-            JOptionPane.showMessageDialog(null, "Year level must be a number!");
-            return;
-        }
-        if (!isProgramValid(program)) {
-            JOptionPane.showMessageDialog(null, "The Program Code '" + program + "' does not exist in our records!");
-            return;
-        }
+        JPanel genGroup = new JPanel(new BorderLayout(0, 2));
+        genGroup.setOpaque(false);
+        JLabel genLabel = new JLabel("Gender:");
+        genLabel.setFont(new Font("Segoe UI", Font.BOLD, 11));
+        ddGender = new JComboBox<>(new String[]{"Male", "Female", "Other"});
+        ddGender.setFont(new Font("Segoe UI", Font.PLAIN, 11));
+        ddGender.setBackground(Color.WHITE);
+        genGroup.add(genLabel, BorderLayout.NORTH);
+        genGroup.add(ddGender, BorderLayout.CENTER);
 
-            saveData(id, firstName, lastName, program, year, gender);
-            loadData();
-        });
+        grid1.add(tfId.getParent());
+        grid1.add(tfFirstName.getParent());
+        grid1.add(tfLastName.getParent());
+        grid1.add(tfProgram.getParent());
+        grid1.add(tfYear.getParent());
+        grid1.add(genGroup);
 
+        JPanel btnPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 0, 8));
+        btnPanel.setOpaque(false);
+        JButton addButton = new JButton("Add Student");
+        addButton.setBackground(ACCENT_BLUE);
+        addButton.setForeground(Color.WHITE);
+        addButton.setFont(new Font("Segoe UI", Font.BOLD, 12));
+        addButton.setFocusPainted(false);
+        addButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        addButton.setPreferredSize(new Dimension(130, 30));
+        btnPanel.add(addButton);
 
+        formContainer.add(grid1);
+        formContainer.add(btnPanel);
+        createPanel.add(formContainer, BorderLayout.CENTER);
+
+        JScrollPane scrollPane = new JScrollPane(studentTable);
+        scrollPane.setBorder(new LineBorder(GRID_COLOR));
+
+        JPanel listPanel = new JPanel(new BorderLayout());
+        listPanel.add(searchPanel, BorderLayout.NORTH);
+        listPanel.add(scrollPane, BorderLayout.CENTER);
 
         JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, listPanel, createPanel);
-        splitPane.setResizeWeight(0.8);
-        
-       
+        splitPane.setResizeWeight(0.85); 
+        splitPane.setDividerSize(4);
+        splitPane.setBorder(null);
+
         this.add(splitPane, BorderLayout.CENTER);
 
-        SwingUtilities.invokeLater(() -> {
-        splitPane.setDividerLocation(0.8);
-
+        setupLogic(addButton);
         loadData();
+    }
+
+    private JTextField createStyledField(String labelText) {
+        JPanel group = new JPanel(new BorderLayout(0, 2));
+        group.setOpaque(false);
+        JLabel label = new JLabel(labelText);
+        label.setFont(new Font("Segoe UI", Font.BOLD, 11));
+        label.setForeground(PRIMARY_NAVY);
+        
+        JTextField field = new JTextField();
+        field.setFont(new Font("Segoe UI", Font.PLAIN, 11));
+        field.setPreferredSize(new Dimension(0, 25));
+        field.setBorder(BorderFactory.createCompoundBorder(
+                new LineBorder(GRID_COLOR, 1),
+                BorderFactory.createEmptyBorder(1, 4, 1, 4)));
+        
+        group.add(label, BorderLayout.NORTH);
+        group.add(field, BorderLayout.CENTER);
+        return field;
+    }
+
+    private void setupLogic(JButton addButton) {
+        sorter = new TableRowSorter<>(tablemodel);
+        studentTable.setRowSorter(sorter);
+        tfSearch.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
+            public void insertUpdate(javax.swing.event.DocumentEvent e) { filter(); }
+            public void removeUpdate(javax.swing.event.DocumentEvent e) { filter(); }
+            public void changedUpdate(javax.swing.event.DocumentEvent e) { filter(); }
+            private void filter() {
+                String text = tfSearch.getText();
+                sorter.setRowFilter(text.trim().isEmpty() ? null : RowFilter.regexFilter("(?i)" + text));
+            }
+        });
+
+        addButton.addActionListener(e -> {
+            String id = tfId.getText().trim();
+            if (!id.matches("^20([01]\\d|2[0-6])-(?!0000)\\d{4}$")) {
+                JOptionPane.showMessageDialog(this, "Invalid ID! (2000-2026)");
+                return;
+            }
+            saveData(id, tfFirstName.getText().trim(), tfLastName.getText().trim(), 
+                     tfProgram.getText().trim(), tfYear.getText().trim(), (String)ddGender.getSelectedItem());
+            loadData();
         });
     }
-    private void saveData(String id, String fn, String ln, String pr, String yr, String gn) {
-    try (java.io.FileWriter fw = new java.io.FileWriter("sourcecode/csvfiles/Student.csv", true);
-         java.io.BufferedWriter bw = new java.io.BufferedWriter(fw);
-         java.io.PrintWriter out = new java.io.PrintWriter(bw)) {
-        
-       out.println(id + "," + fn + "," + ln + "," + pr + "," + yr + "," + gn);
-        
-        JOptionPane.showMessageDialog(null, "Student Added Successfully!");  
-        tfId.setText("");
-        tfFirstName.setText("");
-        tfLastName.setText("");
-        tfProgram.setText("");
-        tfYear.setText("");
-        tfGender.setText("");
 
-    } catch (java.io.IOException e) {
-        JOptionPane.showMessageDialog(null, "Error saving to file: " + e.getMessage());
-        }   
-    }  
+    private void saveData(String id, String fn, String ln, String pr, String yr, String gn) {
+        try (java.io.FileWriter fw = new java.io.FileWriter("sourcecode/csvfiles/Student.csv", true);
+             java.io.PrintWriter out = new java.io.PrintWriter(new java.io.BufferedWriter(fw))) {
+            out.println(id + "," + fn + "," + ln + "," + pr + "," + yr + "," + gn);
+            JOptionPane.showMessageDialog(null, "Student Registered!");
+            tfId.setText(""); tfFirstName.setText(""); tfLastName.setText("");
+            tfProgram.setText(""); tfYear.setText("");
+        } catch (Exception e) { e.printStackTrace(); }
+    }
 
     private void loadData() {
-    tablemodel.setRowCount(0);
-
-    String line;
-    try (java.io.BufferedReader br = new java.io.BufferedReader(new java.io.FileReader("sourcecode/csvfiles/Student.csv"))) {
-        while ((line = br.readLine()) != null) {
-            String[] data = line.split(",");
-            tablemodel.addRow(data);
-        }
-    } catch (java.io.IOException e) {
-        System.out.println("No existing database found or error reading file.");
-        }
-    }
-    private boolean isProgramValid(String programCode) {
-    String line;
-    try (java.io.BufferedReader br = new java.io.BufferedReader(new java.io.FileReader("sourcecode/csvfiles/Program.csv"))) {
-        while ((line = br.readLine()) != null) {
-            String[] data = line.split(",");
-            if (data.length > 0 && data[0].equalsIgnoreCase(programCode)) {
-                return true; 
+        tablemodel.setRowCount(0);
+        try (java.io.BufferedReader br = new java.io.BufferedReader(new java.io.FileReader("sourcecode/csvfiles/Student.csv"))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                tablemodel.addRow(line.split(","));
             }
-        }
-    } catch (java.io.IOException e) {
-        System.out.println("Could not read Program.csv for validation, Input your program code first.");
-    }
-    return false;
+        } catch (Exception e) { }
     }
 }
