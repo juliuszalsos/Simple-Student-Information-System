@@ -29,6 +29,7 @@ public class collegeinterface extends JPanel {
         collegeTable.setShowGrid(true);
         collegeTable.setGridColor(GRID_COLOR);
         collegeTable.setSelectionBackground(new Color(210, 230, 250));
+        collegeTable.setFont(new Font("Segoe UI", Font.PLAIN, 12));
 
         JTableHeader header = collegeTable.getTableHeader();
         header.setPreferredSize(new Dimension(0, 35));
@@ -42,6 +43,7 @@ public class collegeinterface extends JPanel {
         actionColumn.setCellEditor(actionEditor);
         actionColumn.setMaxWidth(45);
 
+
         JPanel searchPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 15, 8));
         searchPanel.setBackground(PRIMARY_NAVY);
         
@@ -51,8 +53,8 @@ public class collegeinterface extends JPanel {
 
         tfSearch = new JTextField(20);
         tfSearch.setBorder(BorderFactory.createCompoundBorder(
-                new LineBorder(ACCENT_BLUE, 1), 
-                BorderFactory.createEmptyBorder(3, 5, 3, 5)));
+        new LineBorder(ACCENT_BLUE, 1), 
+        BorderFactory.createEmptyBorder(3, 5, 3, 5)));
 
         searchPanel.add(searchLabel);
         searchPanel.add(tfSearch);
@@ -137,6 +139,7 @@ public class collegeinterface extends JPanel {
     private void setupLogic(JButton addButton) {
         sorter = new TableRowSorter<>(tablemodel2);
         collegeTable.setRowSorter(sorter);
+
         tfSearch.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
             public void insertUpdate(javax.swing.event.DocumentEvent e) { filter(); }
             public void removeUpdate(javax.swing.event.DocumentEvent e) { filter(); }
@@ -183,7 +186,9 @@ public class collegeinterface extends JPanel {
                     tablemodel2.addRow(new Object[]{data[0], data[1], ""});
                 }
             }
-        } catch (java.io.IOException e) { }
+        } catch (java.io.IOException e) {
+            JOptionPane.showMessageDialog(null, "Error loading data: " + e.getMessage());
+        }
     }
 }
 

@@ -4,6 +4,9 @@ import javax.swing.*;
 import javax.swing.border.*;
 import javax.swing.table.*;
 import java.awt.*;
+import java.io.*;
+import java.util.HashSet;
+import java.util.Set;
 
 public class studentinterface extends JPanel {
     private JTextField tfId, tfFirstName, tfLastName, tfProgram, tfYear;
@@ -106,7 +109,6 @@ public class studentinterface extends JPanel {
         addButton.setForeground(Color.WHITE);
         addButton.setFont(new Font("Segoe UI", Font.BOLD, 12));
         addButton.setFocusPainted(false);
-        addButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
         addButton.setPreferredSize(new Dimension(130, 30));
         btnPanel.add(addButton);
 
@@ -116,7 +118,6 @@ public class studentinterface extends JPanel {
 
         JScrollPane scrollPane = new JScrollPane(studentTable);
         scrollPane.setBorder(new LineBorder(GRID_COLOR));
-
         JPanel listPanel = new JPanel(new BorderLayout());
         listPanel.add(searchPanel, BorderLayout.NORTH);
         listPanel.add(scrollPane, BorderLayout.CENTER);
@@ -127,6 +128,11 @@ public class studentinterface extends JPanel {
         splitPane.setBorder(null);
 
         this.add(splitPane, BorderLayout.CENTER);
+        this.addHierarchyListener(e -> {
+            if ((e.getChangeFlags() & java.awt.event.HierarchyEvent.SHOWING_CHANGED) != 0 && isShowing()) {
+                loadData();
+            }
+        });
 
         setupLogic(addButton);
         loadData();
@@ -138,14 +144,10 @@ public class studentinterface extends JPanel {
         JLabel label = new JLabel(labelText);
         label.setFont(new Font("Segoe UI", Font.BOLD, 11));
         label.setForeground(PRIMARY_NAVY);
-        
         JTextField field = new JTextField();
         field.setFont(new Font("Segoe UI", Font.PLAIN, 11));
         field.setPreferredSize(new Dimension(0, 25));
-        field.setBorder(BorderFactory.createCompoundBorder(
-                new LineBorder(GRID_COLOR, 1),
-                BorderFactory.createEmptyBorder(1, 4, 1, 4)));
-        
+        field.setBorder(BorderFactory.createCompoundBorder(new LineBorder(GRID_COLOR, 1), BorderFactory.createEmptyBorder(1, 4, 1, 4)));
         group.add(label, BorderLayout.NORTH);
         group.add(field, BorderLayout.CENTER);
         return field;
@@ -167,7 +169,7 @@ public class studentinterface extends JPanel {
         addButton.addActionListener(e -> {
             String id = tfId.getText().trim();
             if (!id.matches("^20([01]\\d|2[0-6])-(?!0000)\\d{4}$")) {
-                JOptionPane.showMessageDialog(this, "Invalid ID! (2000-2026)");
+                JOptionPane.showMessageDialog(this, "Invalid ID! (Format: 20XX-XXXX)");
                 return;
             }
             saveData(id, tfFirstName.getText().trim(), tfLastName.getText().trim(), 
@@ -177,8 +179,7 @@ public class studentinterface extends JPanel {
     }
 
     private void saveData(String id, String fn, String ln, String pr, String yr, String gn) {
-        try (java.io.FileWriter fw = new java.io.FileWriter("sourcecode/csvfiles/Student.csv", true);
-             java.io.PrintWriter out = new java.io.PrintWriter(new java.io.BufferedWriter(fw))) {
+        try (PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter("sourcecode/csvfiles/Student.csv", true)))) {
             out.println(id + "," + fn + "," + ln + "," + pr + "," + yr + "," + gn);
             JOptionPane.showMessageDialog(null, "Student Registered!");
             tfId.setText(""); tfFirstName.setText(""); tfLastName.setText("");
@@ -186,13 +187,44 @@ public class studentinterface extends JPanel {
         } catch (Exception e) { e.printStackTrace(); }
     }
 
-    private void loadData() {
+    public void loadData() {
         tablemodel.setRowCount(0);
-        try (java.io.BufferedReader br = new java.io.BufferedReader(new java.io.FileReader("sourcecode/csvfiles/Student.csv"))) {
+        Set<String> validColleges = new HashSet<>();
+        Set<String> validPrograms = new HashSet<>();
+
+        try (BufferedReader brC = new BufferedReader(new FileReader("sourcecode/csvfiles/College.csv"))) {
             String line;
-            while ((line = br.readLine()) != null) {
-                tablemodel.addRow(line.split(","));
+            while ((line = brC.readLine()) != null) {
+                String[] data = line.split(",");
+                if (data.length > 0) validColleges.add(data[0].trim().toUpperCase());
             }
-        } catch (Exception e) { }
+        } catch (IOException e) { }
+
+        try (BufferedReader brP = new BufferedReader(new FileReader("sourcecode/csvfiles/Program.csv"))) {
+            String line;
+            while ((line = brP.readLine()) != null) {
+                String[] data = line.split(",");
+                if (data.length >= 3) {
+                    String pCode = data[0].trim().toUpperCase();
+                    String cRef = data[2].trim().toUpperCase();
+                    if (validColleges.contains(cRef)) {
+                        validPrograms.add(pCode);
+                    }
+                }
+            }
+        } catch (IOException e) { }
+
+            try (BufferedReader brS = new BufferedReader(new FileReader("sourcecode/csvfiles/Student.csv"))) {
+            String sLine;
+            while ((sLine = brS.readLine()) != null) {
+                String[] sData = sLine.split(",");
+                if (sData.length >= 6) {
+                    String studentProg = sData[3].trim().toUpperCase();
+                    if (validPrograms.contains(studentProg)) {
+                        tablemodel.addRow(new Object[]{sData[0], sData[1], sData[2], sData[3], sData[4], sData[5], ""});
+                    }
+                }
+            }
+        } catch (IOException e) { }
     }
 }

@@ -1,23 +1,22 @@
 package gui;
+
 import javax.swing.*;
 import javax.swing.table.*;
 import java.awt.*;
+import java.io.*;
 
-public class programeditor extends AbstractCellEditor implements TableCellEditor, TableCellRenderer  {
+public class programeditor extends AbstractCellEditor implements TableCellEditor, TableCellRenderer {
     private JPanel panel = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, 0));
     private JButton editButton = new JButton("...");
 
     public programeditor(JTable table, DefaultTableModel model) {
-
-        editButton.setFont(new Font("SansSerif", Font.BOLD, 24));
+        editButton.setFont(new Font("Segoe UI", Font.BOLD, 18));
         editButton.setPreferredSize(new Dimension(30, 30));
         editButton.setBorderPainted(false);
         editButton.setContentAreaFilled(false);
         editButton.setFocusPainted(false);
         editButton.setMargin(new Insets(0, 0, 0, 0));
         panel.add(editButton);
-
-        panel.setBackground(table.getSelectionBackground());
 
         JPopupMenu menu = new JPopupMenu();
         JMenuItem deleteProgram = new JMenuItem("Delete Program");
@@ -27,11 +26,11 @@ public class programeditor extends AbstractCellEditor implements TableCellEditor
             int viewrow = table.getSelectedRow();
             if (viewrow != -1) {
                 int row = table.convertRowIndexToModel(viewrow);
-                String pcode = model.getValueAt(row, 0).toString();
+                String oldPCode = model.getValueAt(row, 0).toString();
                 String pname = model.getValueAt(row, 1).toString();
                 String ccode = model.getValueAt(row, 2).toString();
 
-                JTextField f1 = new JTextField(pcode);
+                JTextField f1 = new JTextField(oldPCode);
                 JTextField f2 = new JTextField(pname);
                 JTextField f3 = new JTextField(ccode); 
 
@@ -62,6 +61,11 @@ public class programeditor extends AbstractCellEditor implements TableCellEditor
                     model.setValueAt(updatedCCode, row, 2);
                     
                     updateProgramInfo(model);
+
+                    if (!oldPCode.equalsIgnoreCase(updatedPCode)) {
+                        cascadeUpdateStudents(oldPCode, updatedPCode);
+                    }
+                    
                     JOptionPane.showMessageDialog(null, "Program Updated Successfully");
                 }
             }
@@ -71,11 +75,15 @@ public class programeditor extends AbstractCellEditor implements TableCellEditor
             int viewrow = table.getSelectedRow();
             if (viewrow != -1) {
                 int row = table.convertRowIndexToModel(viewrow);    
-                int confirm = JOptionPane.showConfirmDialog(null, "Are you sure you want to delete this program?", "Confirm Delete", JOptionPane.YES_NO_OPTION);
+                int confirm = JOptionPane.showConfirmDialog(null, 
+                    "Are you sure? This program will be removed.\n" +
+                    "Related students will be hidden from the list.", 
+                    "Confirm Delete", JOptionPane.YES_NO_OPTION);
+                
                 if (confirm == JOptionPane.YES_OPTION) {
                     model.removeRow(row);
                     updateProgramInfo(model); 
-                    JOptionPane.showMessageDialog(null, "Program Removed Permanently");
+                    JOptionPane.showMessageDialog(null, "Program Removed. Related students are now hidden.");
                 }
             }
         });
@@ -88,56 +96,69 @@ public class programeditor extends AbstractCellEditor implements TableCellEditor
         });
     }
 
+    private void cascadeUpdateStudents(String oldPCode, String newPCode) {
+        File inputFile = new File("sourcecode/csvfiles/Student.csv");
+        File tempFile = new File("sourcecode/csvfiles/Student_temp.csv");
+
+        try (BufferedReader br = new BufferedReader(new FileReader(inputFile));
+             PrintWriter pw = new PrintWriter(new FileWriter(tempFile))) {
+            
+            String line;
+            while ((line = br.readLine()) != null) {
+                String[] data = line.split(",");
+                if (data.length > 3 && data[3].equalsIgnoreCase(oldPCode)) {
+                    data[3] = newPCode;
+                    pw.println(String.join(",", data));
+                } else {
+                    pw.println(line);
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        
+        if (inputFile.delete()) {
+            tempFile.renameTo(inputFile);
+        }
+    }
+
     private boolean isCollegeValid(String collegeCode) {
-        try (java.io.BufferedReader br = new java.io.BufferedReader(new java.io.FileReader("sourcecode/csvfiles/College.csv"))) {
+        try (BufferedReader br = new BufferedReader(new FileReader("sourcecode/csvfiles/College.csv"))) {
             String line;
             while ((line = br.readLine()) != null) {
                 String[] data = line.split(",");
                 if (data.length > 0 && data[0].equalsIgnoreCase(collegeCode)) return true;
             }
-        } catch (java.io.IOException e) {
+        } catch (IOException e) {
             return false;
         }
         return false;
     }
 
+    private void updateProgramInfo(DefaultTableModel model) {
+        try (PrintWriter out = new PrintWriter(new FileWriter("sourcecode/csvfiles/Program.csv"))) {
+            for (int i = 0; i < model.getRowCount(); i++) {
+                out.println(model.getValueAt(i, 0).toString() + "," + 
+                            model.getValueAt(i, 1).toString() + "," + 
+                            model.getValueAt(i, 2).toString());
+            }
+        } catch (IOException ex) {
+            JOptionPane.showMessageDialog(null, "Error updating CSV: " + ex.getMessage());
+        }
+    }
+
     @Override
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-        panel.removeAll();
-        panel.add(editButton);
-        if (isSelected) {
-            panel.setBackground(table.getSelectionBackground());
-        } else {
-            panel.setBackground(table.getBackground());
-        }
+        panel.setBackground(isSelected ? table.getSelectionBackground() : table.getBackground());
         return panel;
     }
 
     @Override
     public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
-        panel.removeAll();
-        panel.add(editButton);
         panel.setBackground(table.getSelectionBackground());
         return panel;
     }
 
     @Override
-    public Object getCellEditorValue() {
-        return "";
-    }
-
-    private void updateProgramInfo(DefaultTableModel model) {
-        try (java.io.PrintWriter out = new java.io.PrintWriter(new java.io.FileWriter("sourcecode/csvfiles/Program.csv"))) {
-            for (int i = 0; i < model.getRowCount(); i++) {
-                String rowString = String.join(",", 
-                    model.getValueAt(i, 0).toString(),
-                    model.getValueAt(i, 1).toString(),
-                    model.getValueAt(i, 2).toString()
-                );
-                out.println(rowString);
-            }
-        } catch (java.io.IOException ex) {
-            JOptionPane.showMessageDialog(null, "Error updating CSV: " + ex.getMessage());
-        }
-    }
+    public Object getCellEditorValue() { return ""; }
 }
