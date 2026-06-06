@@ -5,15 +5,15 @@
 2025-0034,Angelo,Bautista,BSME,1,Male
 2020-1845,Janine,Garcia,BSCE,3,Female
 2022-2911,Mark,Torres,BSEE,2,Other
-2024-0512,Kristine,Diaz,BSEnE,4,Female
-2018-1772,Christian,Villanueva,BSBio,2,Male
-2026-0099,Princess,Ramos,BSChem,1,Female
-2021-2134,Joshua,Castro,BSMath,3,Male
-2023-1450,Nicole,Luna,BSEDMath,4,Female
+2024-0512,Kristine,Diaz,BSENE,4,Female
+2018-1772,Christian,Villanueva,BSBIO,2,Male
+2026-0099,Princess,Ramos,BSCHEM,1,Female
+2021-2134,Joshua,Castro,BSMATH,3,Male
+2023-1450,Nicole,Luna,BSMATH,4,Female
 2019-0631,Gabriel,Aquino,BSEDENG,2,Male
 2020-2219,Bea,Santos,BSEDSCI,3,Female
 2022-0441,John Lloyd,Dela Cruz,BSPSYCH,1,Male
-2025-1980,Chloe,Gonzales,BAELS,4,Female
+2025-1980,Chloe,Gonzales,BSA,4,Female
 2018-2814,Daniel,Lopez,BSN,2,Male
 2026-1150,Samantha,Cruz,BSA,1,Female
 2021-0302,Nathaniel,Mercado,BSBA,4,Male
@@ -21,15 +21,15 @@
 2020-0982,Miguel,Del Rosario,BSME,2,Male
 2024-1711,Andrea,Alvarez,BSCE,1,Female
 2019-1405,Elijah,Castillo,BSEE,3,Other
-2022-2290,Sofia,Valenzuela,BSEnE,4,Female
-2025-0811,Justin,Santiago,BSBio,2,Male
-2018-1994,Mariel,Flores,BSChem,1,Female
-2026-2510,Anthony,Sison,BSMath,3,Male
-2021-0744,Erika,Bernardo,BSEDMath,4,Female
+2022-2290,Sofia,Valenzuela,BSENE,4,Female
+2025-0811,Justin,Santiago,BSBIO,2,Male
+2018-1994,Mariel,Flores,BSCHEM,1,Female
+2026-2510,Anthony,Sison,BSMATH,3,Male
+2021-0744,Erika,Bernardo,BSMATH,4,Female
 2023-1812,Timothy,Macaraeg,BSEDENG,2,Male
 2020-0315,Althea,Tolentino,BSEDSCI,1,Female
 2024-2901,Dominic,Manalo,BSPSYCH,3,Male
-2019-2114,Kimberly,Espiritu,BAELS,4,Female
+2019-2114,Kimberly,Espiritu,BSA,4,Female
 2022-1055,Adrian,Soriano,BSN,2,Male
 2025-0422,Gillian,Vergara,BSA,1,Female
 2018-0914,Kenneth,Dizon,BSBA,3,Male
@@ -37,15 +37,15 @@
 2021-1490,Jerome,Navarro,BSME,2,Male
 2023-0112,Patricia,Ferrer,BSCE,1,Female
 2020-2831,Matthew,Corpuz,BSEE,3,Other
-2024-2045,Nadine,Ocampo,BSEnE,4,Female
-2019-0834,Patrick,Salvador,BSBio,2,Male
-2022-1910,Michelle,Rivera,BSChem,1,Female
-2025-2711,Jayson,Gomez,BSMath,3,Male
-2018-2204,Alyssa,Miranda,BSEDMath,4,Female
+2024-2045,Nadine,Ocampo,BSENE,4,Female
+2019-0834,Patrick,Salvador,BSBIO,2,Male
+2022-1910,Michelle,Rivera,BSCHEM,1,Female
+2025-2711,Jayson,Gomez,BSMATH,3,Male
+2018-2204,Alyssa,Miranda,BSMATH,4,Female
 2026-0501,Benjamin,Serrano,BSEDENG,2,Male
 2021-1822,Clarissa,Dumlao,BSEDSCI,1,Female
 2023-2944,Ronaldo,Pineda,BSPSYCH,3,Male
-2020-1140,Denise,Velasco,BAELS,4,Female
+2020-1140,Denise,Velasco,BSA,4,Female
 2024-0331,Bryan,Jimenez,BSN,2,Male
 2019-1704,Kate,Roman,BSA,1,Female
 2022-2512,Aaron,Quinto,BSBA,3,Male
@@ -53,15 +53,15 @@
 2018-1411,Gerald,Abad,BSME,2,Male
 2026-2914,Ella,Ventura,BSCE,1,Female
 2021-0612,Vincent,Solano,BSEE,3,Other
-2023-2110,Monica,Galang,BSEnE,4,Female
-2020-2501,Renzo,Estacio,BSBio,2,Male
-2024-0945,Shaina,Caballero,BSChem,1,Female
-2019-1991,Lester,Agustin,BSMath,3,Male
-2022-0311,Jasmine,Buenaventura,BSEDMath,4,Female
+2023-2110,Monica,Galang,BSENE,4,Female
+2020-2501,Renzo,Estacio,BSBIO,2,Male
+2024-0945,Shaina,Caballero,BSCHEM,1,Female
+2019-1991,Lester,Agustin,BSMATH,3,Male
+2022-0311,Jasmine,Buenaventura,BSMATH,4,Female
 2025-2314,Dexter,Peralta,BSEDENG,2,Male
 2018-0504,Mikaela,Beltran,BSEDSCI,1,Female
 2026-1744,Oliver,Enriquez,BSPSYCH,3,Male
-2021-2912,Kyla,Marquez,BAELS,4,Female
+2021-2912,Kyla,Marquez,BSA,4,Female
 2023-0544,Neil,Guerrero,BSN,2,Male
 2020-1981,Fiona,Lazaro,BSA,1,Female
 2024-1102,Kevin,Domingo,BSBA,3,Male
@@ -69,15 +69,15 @@
 2022-1433,Christian,Pascual,BSME,2,Male
 2025-0611,Hazel,Santos,BSCE,1,Female
 2018-2412,Renz,Mendoza,BSEE,3,Other
-2026-0988,Giselle,Bautista,BSEnE,4,Female
-2021-0811,Marco,Torres,BSBio,2,Male
-2023-2419,Janelle,Garcia,BSChem,1,Female
-2020-1499,Emman,Castro,BSMath,3,Male
-2024-1801,Trisha,Luna,BSEDMath,4,Female
+2026-0988,Giselle,Bautista,BSENE,4,Female
+2021-0811,Marco,Torres,BSBIO,2,Male
+2023-2419,Janelle,Garcia,BSCHEM,1,Female
+2020-1499,Emman,Castro,BSMATH,3,Male
+2024-1801,Trisha,Luna,BSMATH,4,Female
 2019-0344,Kyle,Aquino,BSEDENG,2,Male
 2022-2814,Louisa,Alvarez,BSEDSCI,3,Female
 2025-1410,Rico,Castillo,BSPSYCH,1,Male
-2026-2999,Lyka,Villanueva,BAELS,4,Female
+2026-2999,Lyka,Villanueva,BSA,4,Female
 2020-0711,Julius,Manalastas,BSCA,3,Male
 2023-1940,Celine,Legaspi,BSCA,1,Female
 2025-0552,Roderick,Basco,BSCA,2,Male
@@ -103,7 +103,7 @@
 2025-0034,Angelo,Mendoza,BSIT,1,Male
 2022-2105,Princess,Reyes,BSPSYCH,2,Female
 2019-1188,Mark,Gonzales,BSCE,4,Male
-2024-0567,Althea,Garcia,BAELS,2,Female
+2024-0567,Althea,Garcia,BSA,2,Female
 2020-2991,Jose,Bautista,BSME,4,Male
 2023-0412,Samantha,Cruz,BSIS,3,Female
 2026-1102,Christian,Aquino,BSEE,1,Male
@@ -123,7 +123,7 @@
 2024-0231,Elijah,Domingo,BSIT,2,Male
 2021-1056,Andrea,Espiritu,BSPSYCH,4,Female
 2018-1422,Kenneth,Flores,BSCE,4,Male
-2026-2510,Jasmine,Miranda,BAELS,1,Female
+2026-2510,Jasmine,Miranda,BSA,1,Female
 2022-0943,Renz,Corpuz,BSME,3,Male
 2025-1123,Patricia,De Leon,BSIS,1,Female
 2020-1876,Dominic,Agpalo,BSEE,4,Male
@@ -143,7 +143,7 @@
 2022-2765,Patrick,Ferrer,BSIT,2,Male
 2025-1498,Rochelle,Calma,BSPSYCH,1,Female
 2023-1134,Aldrin,Dimaculangan,BSCE,3,Male
-2020-0672,Nadine,Arceo,BAELS,4,Female
+2020-0672,Nadine,Arceo,BSA,4,Female
 2024-1921,Bryan,Magno,BSME,2,Male
 2021-2810,Christine,Gopez,BSIS,3,Female
 2019-0432,Emmanuel,Macaraeg,BSEE,4,Male
@@ -163,7 +163,7 @@
 2024-0043,Justine,Carlos,BSIT,2,Male
 2021-1678,Hazel,Mendoza,BSPSYCH,3,Female
 2019-0932,Reynaldo,Rosales,BSCE,4,Male
-2026-1187,Clarissa,Jimenez,BAELS,1,Female
+2026-1187,Clarissa,Jimenez,BSA,1,Female
 2022-2434,John Paul,Enriquez,BSME,2,Male
 2025-0810,Ella,Salonga,BSIS,1,Female
 2023-1562,Mark Joseph,Evangelista,BSEE,3,Male
@@ -183,7 +183,7 @@
 2022-0110,Raymond,Tayag,BSIT,3,Male
 2025-2011,Mariel,Natividad,BSPSYCH,1,Female
 2023-2476,Lester,Velasco,BSCE,2,Male
-2020-0999,Divina,Zamora,BAELS,4,Female
+2020-0999,Divina,Zamora,BSA,4,Female
 2024-1542,King,Panganiban,BSME,2,Male
 2021-0431,Shaira,Quizon,BSIS,3,Female
 2018-2999,Noel,Tolentino,BSEE,4,Male
@@ -203,7 +203,7 @@
 2025-2234,Angelo,Mendoza,BSIT,1,Male
 2022-0105,Princess,Reyes,BSPSYCH,3,Female
 2019-1988,Mark,Gonzales,BSCE,4,Male
-2024-0517,Althea,Garcia,BAELS,2,Female
+2024-0517,Althea,Garcia,BSA,2,Female
 2020-2091,Jose,Bautista,BSME,4,Male
 2023-1412,Samantha,Cruz,BSIS,3,Female
 2026-0102,Christian,Aquino,BSEE,1,Male
@@ -223,7 +223,7 @@
 2024-2231,Elijah,Domingo,BSIT,2,Male
 2021-2056,Andrea,Espiritu,BSPSYCH,4,Female
 2018-0422,Kenneth,Flores,BSCE,4,Male
-2026-1510,Jasmine,Miranda,BAELS,1,Female
+2026-1510,Jasmine,Miranda,BSA,1,Female
 2022-2943,Renz,Corpuz,BSME,2,Male
 2025-0123,Patricia,De Leon,BSIS,2,Female
 2020-0876,Dominic,Agpalo,BSEE,4,Male
@@ -243,7 +243,7 @@
 2022-0765,Patrick,Ferrer,BSIT,3,Male
 2025-0498,Rochelle,Calma,BSPSYCH,2,Female
 2023-2134,Aldrin,Dimaculangan,BSCE,3,Male
-2020-2672,Nadine,Arceo,BAELS,4,Female
+2020-2672,Nadine,Arceo,BSA,4,Female
 2024-0921,Bryan,Magno,BSME,2,Male
 2021-1810,Christine,Gopez,BSIS,4,Female
 2019-2432,Emmanuel,Macaraeg,BSEE,4,Male
@@ -263,7 +263,7 @@
 2024-2043,Justine,Carlos,BSIT,2,Male
 2021-0678,Hazel,Mendoza,BSPSYCH,4,Female
 2019-2932,Reynaldo,Rosales,BSCE,4,Male
-2026-0187,Clarissa,Jimenez,BAELS,1,Female
+2026-0187,Clarissa,Jimenez,BSA,1,Female
 2022-1434,John Paul,Enriquez,BSME,3,Male
 2025-2810,Ella,Salonga,BSIS,1,Female
 2023-0562,Mark Joseph,Evangelista,BSEE,3,Male
@@ -283,7 +283,7 @@
 2022-1110,Raymond,Tayag,BSIT,3,Male
 2025-1011,Mariel,Natividad,BSPSYCH,2,Female
 2023-1476,Lester,Velasco,BSCE,3,Male
-2020-2999,Divina,Zamora,BAELS,4,Female
+2020-2999,Divina,Zamora,BSA,4,Female
 2024-0542,King,Panganiban,BSME,2,Male
 2021-2431,Shaira,Quizon,BSIS,4,Female
 2018-1999,Noel,Tolentino,BSEE,4,Male
@@ -303,7 +303,7 @@
 2025-0982,Ethan,Macatangay,BSIT,1,Male
 2022-2143,Jasmine,Delos Santos,BSPSYCH,3,Female
 2018-1154,Ricardo,Severino,BSCE,4,Male
-2024-1327,Alexis,Buenaflor,BAELS,2,Female
+2024-1327,Alexis,Buenaflor,BSA,2,Female
 2020-0523,Fernando,Poe,BSME,4,Male
 2023-2819,Maria Theresa,Cuenco,BSIS,3,Female
 2026-1745,Mateo,Almeda,BSEE,1,Male
@@ -323,7 +323,7 @@
 2024-1054,Diosdado,Macapagal,BSIT,3,Male
 2021-2981,Elpidio,Quirino,BSPSYCH,4,Male
 2018-2311,Manuel,Roxas,BSCE,4,Male
-2026-1922,Sergio,Osmeña,BAELS,1,Male
+2026-1922,Sergio,Osmeña,BSA,1,Male
 2022-1563,Jose,Laurel,BSME,3,Male
 2025-0452,Emilio,Aguinaldo,BSIS,1,Male
 2020-2119,Andres,Bonifacio,BSEE,4,Male
@@ -343,7 +343,7 @@
 2022-0542,Artemio,Ricarte,BSIT,2,Male
 2025-1399,Trinidad,Tecson,BSPSYCH,2,Female
 2023-2891,Miguel,Malvar,BSCE,3,Male
-2020-1431,Julian,Felipe,BAELS,4,Male
+2020-1431,Julian,Felipe,BSA,4,Male
 2024-0432,Jose,Palma,BSME,2,Male
 2021-2231,Delfina,Herbosa,BSIS,4,Female
 2019-1056,Marciano,Abad,BSEE,4,Male
@@ -363,7 +363,7 @@
 2024-2101,Paciano,Rizal,BSIT,3,Male
 2021-1289,Josefa,Llanes,BSPSYCH,4,Female
 2019-0765,Vicente,Lim,BSCE,4,Male
-2026-1341,Cesar,Basa,BAELS,1,Male
+2026-1341,Cesar,Basa,BSA,1,Male
 2022-2991,Jesus,Villamor,BSME,2,Male
 2025-0811,Josefa,Capistrano,BSIS,1,Female
 2023-1542,Jose,Abad Santos,BSEE,3,Male
@@ -383,7 +383,7 @@
 2022-2102,Honorata,De La Rama,BSIT,3,Female
 2025-1990,Jovita,Fuentes,BSPSYCH,1,Female
 2023-0543,Pelagia,Mendoza,BSCE,2,Female
-2020-1891,Leonor,Rivera,BAELS,4,Female
+2020-1891,Leonor,Rivera,BSA,4,Female
 2024-2743,Segunda,Katigbak,BSME,2,Female
 2021-0982,Consuelo,Ortiga,BSIS,4,Female
 2018-2911,Osei,Keisuke,BSEE,4,Male
@@ -403,7 +403,7 @@
 2025-1034,Angelo Gabriel,Mendoza,BSIT,1,Male
 2022-2905,Princess Sarah,Reyes,BSPSYCH,3,Female
 2019-0188,Mark Anthony,Gonzales,BSCE,4,Male
-2024-1567,Althea Mae,Garcia,BAELS,2,Female
+2024-1567,Althea Mae,Garcia,BSA,2,Female
 2020-0991,Jose Mario,Bautista,BSME,4,Male
 2023-1413,Samantha Jane,Cruz,BSIS,3,Female
 2026-2102,Christian John,Aquino,BSEE,1,Male
@@ -423,7 +423,7 @@
 2024-1231,Elijah James,Domingo,BSIT,2,Male
 2021-0056,Andrea Nicole,Espiritu,BSPSYCH,4,Female
 2018-2422,Kenneth Charles,Flores,BSCE,4,Male
-2026-0510,Jasmine Pearl,Miranda,BAELS,1,Female
+2026-0510,Jasmine Pearl,Miranda,BSA,1,Female
 2022-1943,Renz Matthew,Corpuz,BSME,2,Male
 2025-2123,Patricia May,De Leon,BSIS,2,Female
 2020-2876,Dominic Xavier,Agpalo,BSEE,4,Male
@@ -443,7 +443,7 @@
 2022-1765,Patrick John,Ferrer,BSIT,3,Male
 2025-2498,Rochelle Mae,Calma,BSPSYCH,2,Female
 2023-0134,Aldrin James,Dimaculangan,BSCE,3,Male
-2020-1672,Nadine Faye,Arceo,BAELS,4,Female
+2020-1672,Nadine Faye,Arceo,BSA,4,Female
 2024-2921,Bryan Keith,Magno,BSME,2,Male
 2021-0810,Christine Joy,Gopez,BSIS,4,Female
 2019-1432,Emmanuel John,Macaraeg,BSEE,4,Male
@@ -463,7 +463,7 @@
 2024-1043,Justine Clark,Carlos,BSIT,2,Male
 2021-2678,Hazel Joy,Mendoza,BSPSYCH,4,Female
 2019-1932,Reynaldo Jose,Rosales,BSCE,4,Male
-2026-2187,Clarissa Mae,Jimenez,BAELS,1,Female
+2026-2187,Clarissa Mae,Jimenez,BSA,1,Female
 2022-0434,John Paul,Enriquez,BSME,3,Male
 2025-1810,Ella Marie,Salonga,BSIS,1,Female
 2023-2562,Mark Joseph,Evangelista,BSEE,3,Male
@@ -483,7 +483,7 @@
 2022-0110,Raymond John,Tayag,BSIT,3,Male
 2025-0011,Mariel Rose,Natividad,BSPSYCH,2,Female
 2023-0476,Lester John,Velasco,BSCE,3,Male
-2020-1999,Divina Grace,Zamora,BAELS,4,Female
+2020-1999,Divina Grace,Zamora,BSA,4,Female
 2024-2542,King Arthur,Panganiban,BSME,2,Male
 2021-1431,Shaira Mae,Quizon,BSIS,4,Female
 2018-0999,Noel John,Tolentino,BSEE,4,Male
@@ -503,7 +503,7 @@
 2025-2982,Ethan John,Macatangay,BSIT,1,Male
 2022-1143,Jasmine Rose,Delos Santos,BSPSYCH,3,Female
 2018-0154,Ricardo Jose,Severino,BSCE,4,Male
-2024-0327,Alexis Mae,Buenaflor,BAELS,2,Female
+2024-0327,Alexis Mae,Buenaflor,BSA,2,Female
 2020-1523,Fernando Jose,Poe,BSME,4,Male
 2023-1819,Maria Theresa,Cuenco,BSIS,3,Female
 2026-0745,Mateo John,Almeda,BSEE,1,Male
@@ -523,7 +523,7 @@
 2024-0054,Diosdado Macapagal,Macapagal,BSIT,3,Male
 2021-1981,Elpidio Rivera,Quirino,BSPSYCH,4,Male
 2018-1311,Manuel Acuña,Roxas,BSCE,4,Male
-2026-0922,Sergio Osmeña,Osmeña,BAELS,1,Male
+2026-0922,Sergio Osmeña,Osmeña,BSA,1,Male
 2022-0563,Jose Paciano,Laurel,BSME,3,Male
 2025-1452,Emilio Famy,Aguinaldo,BSIS,1,Male
 2020-1119,Andres De Castro,Bonifacio,BSEE,4,Male
@@ -543,7 +543,7 @@
 2022-2542,Artemio Garcia,Ricarte,BSIT,2,Male
 2025-0399,Trinidad Perez,Tecson,BSPSYCH,2,Female
 2023-1891,Miguel Carpio,Malvar,BSCE,3,Male
-2020-0431,Julian Reyes,Felipe,BAELS,4,Male
+2020-0431,Julian Reyes,Felipe,BSA,4,Male
 2024-1432,Jose Ribas,Palma,BSME,2,Male
 2021-1231,Delfina Rizal,Herbosa,BSIS,4,Female
 2019-2056,Marciano Santos,Abad,BSEE,4,Male
@@ -563,7 +563,7 @@
 2024-1101,Paciano Mercado,Rizal,BSIT,3,Male
 2021-0289,Josefa Llanes,Escoda,BSPSYCH,4,Female
 2019-2765,Vicente Podico,Lim,BSCE,4,Male
-2026-0341,Cesar Fernando,Basa,BAELS,1,Male
+2026-0341,Cesar Fernando,Basa,BSA,1,Male
 2022-1991,Jesus Antonio,Villamor,BSME,2,Male
 2025-2811,Josefa Capistrano,Castro,BSIS,1,Female
 2023-0542,Jose Abad Santos,Santos,BSEE,3,Male
@@ -583,7 +583,7 @@
 2022-1102,Honorata De La Rama,Ramos,BSIT,3,Female
 2025-0990,Jovita Fuentes,Fuentes,BSPSYCH,1,Female
 2023-2543,Pelagia Mendoza,Mendoza,BSCE,2,Female
-2020-0891,Leonor Rivera,Kipping,BAELS,4,Female
+2020-0891,Leonor Rivera,Kipping,BSA,4,Female
 2024-1743,Segunda Katigbak,Luz,BSME,2,Female
 2021-2982,Consuelo Ortiga,Rey,BSIS,4,Female
 2018-1911,Osei Keisuke,Japanese,BSEE,4,Male
@@ -598,3 +598,6 @@
 2026-1765,Jose Maria,Panganiban,BSEDENG,1,Male
 2022-0922,Dominador Gomez,Gomez,BSENE,3,Male
 2025-0542,Juan Castaneda,Castaneda,BSEDSCI,2,Male
+2021-1105,John,Burton,BSA,1,Male
+2021-1106,John,BAa,BSA,1,Male
+2021-0001,John,Ploo,BSBBBBB,1,Male

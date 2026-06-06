@@ -8,7 +8,8 @@ import java.io.*;
 import java.util.HashSet;
 
 public class programinterface extends JPanel {
-    private JTextField tfPCode, tfPName, tfCCode;
+    private JTextField tfPCode, tfPName;
+    private JComboBox<String> cbCCode; // Changed from JTextField tfCCode
     private JTable programTable;
     private DefaultTableModel tablemodel1;
     private JTextField tfSearch;
@@ -70,10 +71,13 @@ public class programinterface extends JPanel {
         grid.setOpaque(false);
         tfPCode = createStyledField("Program Code:");
         tfPName = createStyledField("Program Name:");
-        tfCCode = createStyledField("College Code:");
+        
+        cbCCode = new JComboBox<>(); // Initialized combo box
+        JPanel pCCode = createStyledComboBox("College Code:", cbCCode);
+
         grid.add(tfPCode.getParent());
         grid.add(tfPName.getParent());
-        grid.add(tfCCode.getParent());
+        grid.add(pCCode);
 
         JPanel btnPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 0, 8));
         btnPanel.setOpaque(false);
@@ -112,6 +116,37 @@ public class programinterface extends JPanel {
         return field;
     }
 
+    // Handles identical styled structure and spacing requirements for the combo box item placement
+    private JPanel createStyledComboBox(String labelText, JComboBox<String> comboBox) {
+        JPanel group = new JPanel(new BorderLayout(0, 2));
+        group.setOpaque(false);
+        JLabel label = new JLabel(labelText);
+        label.setFont(new Font("Segoe UI", Font.BOLD, 11));
+        comboBox.setFont(new Font("Segoe UI", Font.PLAIN, 11));
+        comboBox.setBackground(Color.WHITE);
+        comboBox.setPreferredSize(new Dimension(0, 25));
+        group.add(label, BorderLayout.NORTH);
+        group.add(comboBox, BorderLayout.CENTER);
+        return group;
+    }
+
+    // Pulls college entries from College.csv data cleanly into selections
+    public void populateCollegeDropdown() {
+        cbCCode.removeAllItems();
+        File file = new File("sourcecode/csvfiles/College.csv");
+        if (!file.exists()) return;
+        try (BufferedReader br = new BufferedReader(new FileReader(file))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                if (line.trim().isEmpty()) continue;
+                String[] data = line.split(",");
+                if (data.length > 0) {
+                    cbCCode.addItem(data[0].trim().toUpperCase());
+                }
+            }
+        } catch (IOException e) { e.printStackTrace(); }
+    }
+
     private void setupLogic(JButton addButton) {
         sorter = new TableRowSorter<>(tablemodel1);
         programTable.setRowSorter(sorter);
@@ -128,9 +163,11 @@ public class programinterface extends JPanel {
         addButton.addActionListener(e -> {
             String pcode = tfPCode.getText().trim().toUpperCase();
             String pname = tfPName.getText().trim();
-            String ccode = tfCCode.getText().trim().toUpperCase();
+            Object selectedCollege = cbCCode.getSelectedItem();
 
-            if (pcode.isEmpty() || pname.isEmpty() || ccode.isEmpty()) return;
+            if (pcode.isEmpty() || pname.isEmpty() || selectedCollege == null) return;
+
+            String ccode = selectedCollege.toString();
 
             if (doesProgramExist(pcode)) {
                 JOptionPane.showMessageDialog(this, "This program already exists", "Error", JOptionPane.ERROR_MESSAGE);
@@ -162,12 +199,13 @@ public class programinterface extends JPanel {
         try (PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter("sourcecode/csvfiles/Program.csv", true)))) {
             out.println(pcode + "," + pname + "," + ccode);
             JOptionPane.showMessageDialog(null, "Program Added Successfully!");
-            tfPCode.setText(""); tfPName.setText(""); tfCCode.setText("");
+            tfPCode.setText(""); tfPName.setText("");
         } catch (IOException e) { e.printStackTrace(); }
     }
 
     public void loadData() {
         tablemodel1.setRowCount(0);
+        populateCollegeDropdown(); // Refresh options inside the dropdown selector layout
         
         HashSet<String> activeColleges = new HashSet<>();
         File collegeFile = new File("sourcecode/csvfiles/College.csv");
@@ -192,8 +230,6 @@ public class programinterface extends JPanel {
                 String[] data = line.split(",");
                 if (data.length >= 3) {
                     String targetCollege = data[2].trim().toUpperCase();
-                    // Dynamically displays "NULL" if the code isn't in College.csv.
-                    // If it is added back, it shows the code normally.
                     String displayedCollege = activeColleges.contains(targetCollege) ? data[2].trim() : "NULL";
                     tablemodel1.addRow(new Object[]{data[0].trim(), data[1].trim(), displayedCollege, ""});
                 }

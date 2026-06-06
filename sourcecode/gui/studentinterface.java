@@ -8,7 +8,8 @@ import java.io.*;
 import java.util.HashSet;
 
 public class studentinterface extends JPanel {
-    private JTextField tfId, tfFirstName, tfLastName, tfProgram, tfYear;
+    private JTextField tfId, tfFirstName, tfLastName;
+    private JComboBox<String> cbProgram, cbYear; // Changed from JTextField tfProgram, tfYear
     private JComboBox<String> ddGender;
     private JTable studentTable;
     private DefaultTableModel tablemodel;
@@ -81,8 +82,14 @@ public class studentinterface extends JPanel {
         JPanel pId = createStyledFieldGroup("ID:", tfId = new JTextField());
         JPanel pFN = createStyledFieldGroup("First Name:", tfFirstName = new JTextField());
         JPanel pLN = createStyledFieldGroup("Last Name:", tfLastName = new JTextField());
-        JPanel pPR = createStyledFieldGroup("Program:", tfProgram = new JTextField());
-        JPanel pYR = createStyledFieldGroup("Year:", tfYear = new JTextField());
+
+        // Create Dropdown for Programs
+        cbProgram = new JComboBox<>();
+        JPanel pPR = createStyledComboBoxGroup("Program:", cbProgram);
+
+        // Create Dropdown for Year Levels (1, 2, 3, 4)
+        cbYear = new JComboBox<>(new String[]{"1", "2", "3", "4"});
+        JPanel pYR = createStyledComboBoxGroup("Year:", cbYear);
 
         JPanel genGroup = new JPanel(new BorderLayout(0, 2));
         genGroup.setOpaque(false);
@@ -158,6 +165,41 @@ public class studentinterface extends JPanel {
         return group; 
     }
 
+    // Helper method to keep UI styling consistent for the new dropdown components
+    private JPanel createStyledComboBoxGroup(String labelText, JComboBox<String> comboBox) {
+        JPanel group = new JPanel(new BorderLayout(0, 2));
+        group.setOpaque(false);
+        
+        JLabel label = new JLabel(labelText);
+        label.setFont(new Font("Segoe UI", Font.BOLD, 11));
+        label.setForeground(PRIMARY_NAVY);
+        
+        comboBox.setFont(new Font("Segoe UI", Font.PLAIN, 11));
+        comboBox.setBackground(Color.WHITE);
+        comboBox.setPreferredSize(new Dimension(0, 25));
+                
+        group.add(label, BorderLayout.NORTH);
+        group.add(comboBox, BorderLayout.CENTER);
+        return group; 
+    }
+
+    // Automatically scans Program.csv and updates the dropdown selections dynamically
+    public void populateProgramDropdown() {
+        cbProgram.removeAllItems();
+        File file = new File("sourcecode/csvfiles/Program.csv");
+        if (!file.exists()) return;
+        try (BufferedReader br = new BufferedReader(new FileReader(file))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                if (line.trim().isEmpty()) continue;
+                String[] data = line.split(",");
+                if (data.length > 0) {
+                    cbProgram.addItem(data[0].trim().toUpperCase());
+                }
+            }
+        } catch (IOException e) { e.printStackTrace(); }
+    }
+
     private void setupLogic(JButton addButton) {
         sorter = new TableRowSorter<>(tablemodel);
         studentTable.setRowSorter(sorter);
@@ -173,9 +215,16 @@ public class studentinterface extends JPanel {
 
         addButton.addActionListener(e -> {
             String id = tfId.getText().trim();
+            Object selectedProg = cbProgram.getSelectedItem();
+            Object selectedYear = cbYear.getSelectedItem();
             
-            if (!id.matches("^(201[7-9]|202[0-6])-(000[1-9]|00[1-9]\\d|0[1-9]\\d{2}|[1-2]\\d{3}|3000|4000)$")) {
-                JOptionPane.showMessageDialog(this, "Invalid ID Format! Use: YYYY-XXXX (Year: 2017-2026, Number: 0001-4000)");
+            if (!id.matches("^(201[8-9]|202[0-6])-([0-1][0-9]{3}|2[0-4][0-9]{2}|2500)$")) {
+                JOptionPane.showMessageDialog(this, "Invalid ID Format! Use: YYYY-NNNN");
+                return;
+            }
+
+            if (selectedProg == null || selectedYear == null || tfFirstName.getText().trim().isEmpty() || tfLastName.getText().trim().isEmpty()) {
+                JOptionPane.showMessageDialog(this, "All fields must be completed!", "Error", JOptionPane.ERROR_MESSAGE);
                 return;
             }
 
@@ -185,7 +234,7 @@ public class studentinterface extends JPanel {
             }
 
             saveData(id, tfFirstName.getText().trim(), tfLastName.getText().trim(), 
-                     tfProgram.getText().trim().toUpperCase(), tfYear.getText().trim(), (String)ddGender.getSelectedItem());
+                     selectedProg.toString(), selectedYear.toString(), (String)ddGender.getSelectedItem());
             loadData();
         });
     }
@@ -212,7 +261,6 @@ public class studentinterface extends JPanel {
             out.println(id + "," + fn + "," + ln + "," + pr + "," + yr + "," + gn);
             JOptionPane.showMessageDialog(null, "Student Registered!");
             tfId.setText(""); tfFirstName.setText(""); tfLastName.setText("");
-            tfProgram.setText(""); tfYear.setText("");
         } catch (IOException e) { 
             JOptionPane.showMessageDialog(this, "Error saving entry: " + e.getMessage());
             e.printStackTrace(); 
@@ -221,6 +269,7 @@ public class studentinterface extends JPanel {
 
     public void loadData() {
         tablemodel.setRowCount(0);
+        populateProgramDropdown(); // Sync choices whenever data loads
         
         HashSet<String> activePrograms = new HashSet<>();
         File programFile = new File("sourcecode/csvfiles/Program.csv");
@@ -245,8 +294,6 @@ public class studentinterface extends JPanel {
                 String[] data = line.split(",");
                 if (data.length >= 6) {
                     String targetProg = data[3].trim().toUpperCase();
-                    // Dynamically displays "NOT ENROLLED" if the program isn't found in Program.csv.
-                    // If it gets added back, it displays the original program name normally.
                     String displayedProgram = activePrograms.contains(targetProg) ? data[3].trim() : "NOT ENROLLED";
                     tablemodel.addRow(new Object[]{
                         data[0].trim(), data[1].trim(), data[2].trim(), 
