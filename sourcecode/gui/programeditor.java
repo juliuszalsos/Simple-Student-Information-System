@@ -23,7 +23,7 @@ public class programeditor extends AbstractCellEditor implements TableCellEditor
         JMenuItem deleteProgram = new JMenuItem("Delete Program");
         JMenuItem updateProgram = new JMenuItem("Update Information");
 
-        // --- UPDATE PROGRAM ---
+        // --- UPDATE PROGRAM CODE & CASCADE TO STUDENTS ---
         updateProgram.addActionListener(e -> {
             int viewrow = parentTable.getSelectedRow();
             if (viewrow != -1) {
@@ -70,18 +70,23 @@ public class programeditor extends AbstractCellEditor implements TableCellEditor
             int viewrow = parentTable.getSelectedRow();
             if (viewrow != -1) {
                 int row = parentTable.convertRowIndexToModel(viewrow);
+                String targetPCode = model.getValueAt(row, 0).toString().trim().toUpperCase();
                 
                 int confirm = JOptionPane.showConfirmDialog(null, 
-                    "Delete this Program? Students under it will show NOT ENROLLED unless it is added back.", "Confirm Delete", JOptionPane.YES_NO_OPTION);
+                    "Delete this Program? Students under it will permanently be marked as NOT ENROLLED.", 
+                    "Confirm Delete", JOptionPane.YES_NO_OPTION);
                 
                 if (confirm == JOptionPane.YES_OPTION) {
                     fireEditingStopped();
                     model.removeRow(row);
                     updateProgramCSV(model);
                     
+                    // Permanently overwrite student data references to NOT ENROLLED
+                    cascadeNullifyStudentsCSV(targetPCode);
+                    
                     refreshOtherTabs();
                     
-                    JOptionPane.showMessageDialog(null, "Program removed successfully.");
+                    JOptionPane.showMessageDialog(null, "Program removed. Dependent student records permanently set to NOT ENROLLED.");
                 }
             }
         });
@@ -101,7 +106,7 @@ public class programeditor extends AbstractCellEditor implements TableCellEditor
                 String[] data = line.split(",");
                 if (data.length > 0 && data[0].trim().toUpperCase().equals(code)) return true;
             }
-        } catch (IOException e) { e.printStackTrace(); }
+        }  catch (IOException e) { e.printStackTrace(); }
         return false;
     }
 
@@ -118,6 +123,29 @@ public class programeditor extends AbstractCellEditor implements TableCellEditor
                 String[] data = line.split(",");
                 if (data.length >= 4 && data[3].trim().toUpperCase().equals(oldPCode)) {
                     data[3] = newPCode;
+                }
+                pw.println(String.join(",", data));
+            }
+        } catch (IOException e) { e.printStackTrace(); }
+
+        if (inputFile.exists()) inputFile.delete();
+        tempFile.renameTo(inputFile);
+    }
+
+    // NEW METHOD: Permanently converts student programs inside Student.csv to NOT ENROLLED
+    private void cascadeNullifyStudentsCSV(String targetPCode) {
+        File inputFile = new File("sourcecode/csvfiles/Student.csv");
+        if (!inputFile.exists()) return;
+        File tempFile = new File("sourcecode/csvfiles/Student_temp.csv");
+
+        try (BufferedReader br = new BufferedReader(new FileReader(inputFile));
+             PrintWriter pw = new PrintWriter(new FileWriter(tempFile))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                if (line.trim().isEmpty()) continue;
+                String[] data = line.split(",");
+                if (data.length >= 4 && data[3].trim().toUpperCase().equals(targetPCode)) {
+                    data[3] = "NOT ENROLLED"; // Disconnect records permanently 
                 }
                 pw.println(String.join(",", data));
             }

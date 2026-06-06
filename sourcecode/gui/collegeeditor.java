@@ -66,9 +66,10 @@ public class collegeeditor extends AbstractCellEditor implements TableCellEditor
             int viewrow = parentTable.getSelectedRow();
             if (viewrow != -1) {
                 int row = parentTable.convertRowIndexToModel(viewrow);
+                String targetCCode = model.getValueAt(row, 0).toString().trim().toUpperCase();
                 
                 int confirm = JOptionPane.showConfirmDialog(null, 
-                    "Delete this College? Related programs will show NULL unless this college is added back.", 
+                    "Delete this College? Linked programs will permanently become NULL.", 
                     "Confirm Delete", JOptionPane.YES_NO_OPTION);
                 
                 if (confirm == JOptionPane.YES_OPTION) {
@@ -76,9 +77,12 @@ public class collegeeditor extends AbstractCellEditor implements TableCellEditor
                     model.removeRow(row);
                     updateCollegeCSV(model);
                     
+                    // Permanently clear relations inside the CSV record
+                    cascadeNullifyProgramsCSV(targetCCode);
+                    
                     refreshOtherTabs();
 
-                    JOptionPane.showMessageDialog(null, "College removed successfully.");
+                    JOptionPane.showMessageDialog(null, "College removed. Linked program references set to NULL permanently.");
                 }
             }
         });
@@ -135,6 +139,29 @@ public class collegeeditor extends AbstractCellEditor implements TableCellEditor
                 String[] data = line.split(",");
                 if (data.length >= 3 && data[2].trim().toUpperCase().equals(oldCCode)) {
                     data[2] = newCCode;
+                }
+                pw.println(String.join(",", data));
+            }
+        } catch (IOException e) { e.printStackTrace(); }
+
+        if (inputFile.exists()) inputFile.delete();
+        tempFile.renameTo(inputFile);
+    }
+
+    // NEW METHOD: Overwrites matching college references permanently to NULL inside Program.csv
+    private void cascadeNullifyProgramsCSV(String targetCCode) {
+        File inputFile = new File("sourcecode/csvfiles/Program.csv");
+        if (!inputFile.exists()) return;
+        File tempFile = new File("sourcecode/csvfiles/Program_temp.csv");
+
+        try (BufferedReader br = new BufferedReader(new FileReader(inputFile));
+             PrintWriter pw = new PrintWriter(new FileWriter(tempFile))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                if (line.trim().isEmpty()) continue;
+                String[] data = line.split(",");
+                if (data.length >= 3 && data[2].trim().toUpperCase().equals(targetCCode)) {
+                    data[2] = "NULL"; // Force change data layer permanently
                 }
                 pw.println(String.join(",", data));
             }
