@@ -25,97 +25,97 @@ public class studenteditor extends AbstractCellEditor implements TableCellEditor
         JMenuItem updateStudent = new JMenuItem("Update Information");
 
         updateStudent.addActionListener(e -> {
-    int viewrow = table.getSelectedRow();
-    if (viewrow != -1) {
-        int row = table.convertRowIndexToModel(viewrow);
-        String id = model.getValueAt(row, 0).toString();
-        String fn = model.getValueAt(row, 1).toString();
-        String ln = model.getValueAt(row, 2).toString();
-        String pr = model.getValueAt(row, 3).toString();
-        String yr = model.getValueAt(row, 4).toString();
-        String[] genders = {"Male", "Female", "Other"};
-        JComboBox<String> genderBox = new JComboBox<>(genders);
-        
-        String currentGender = model.getValueAt(row, 5).toString();
-        if (currentGender.equals("Male") || currentGender.equals("Female")) {
-            genderBox.setSelectedItem(currentGender);
-        } else {
-            genderBox.setSelectedItem("Other");
-        }
-
-        JTextField f1 = new JTextField(id);
-        JTextField f2 = new JTextField(fn);
-        JTextField f3 = new JTextField(ln);
-        JTextField f4 = new JTextField(pr);
-        JTextField f5 = new JTextField(yr);
-        Object[] message = {
-            "Student ID:", f1,
-            "First Name:", f2,
-            "Last Name:", f3,
-            "Program:", f4,
-            "Year:", f5,
-            "Gender:", genderBox
-        };
-
-        int option = JOptionPane.showConfirmDialog(null, message, "Update Student", JOptionPane.OK_CANCEL_OPTION);
-        if (option == JOptionPane.OK_OPTION) {
-            String selectedGender = (String) genderBox.getSelectedItem();
-            String finalGender = selectedGender;
-
-            if (selectedGender.equals("Other")) {
-                String customGender = JOptionPane.showInputDialog(null, "Please specify your gender:", "Specify Gender", JOptionPane.QUESTION_MESSAGE);
-                if (customGender != null && !customGender.trim().isEmpty()) {
-                    finalGender = customGender.trim();
+            int viewrow = table.getSelectedRow();
+            if (viewrow != -1) {
+                int row = table.convertRowIndexToModel(viewrow);
+                String id = model.getValueAt(row, 0).toString();
+                String fn = model.getValueAt(row, 1).toString();
+                String ln = model.getValueAt(row, 2).toString();
+                String pr = model.getValueAt(row, 3).toString();
+                String yr = model.getValueAt(row, 4).toString();
+                String[] genders = {"Male", "Female", "Other"};
+                JComboBox<String> genderBox = new JComboBox<>(genders);
+                
+                String currentGender = model.getValueAt(row, 5).toString();
+                if (currentGender.equals("Male") || currentGender.equals("Female")) {
+                    genderBox.setSelectedItem(currentGender);
                 } else {
-                    finalGender = "Other"; 
+                    genderBox.setSelectedItem("Other");
+                }
+
+                JTextField f1 = new JTextField(id);
+                JTextField f2 = new JTextField(fn);
+                JTextField f3 = new JTextField(ln);
+                JTextField f4 = new JTextField(pr);
+                JTextField f5 = new JTextField(yr);
+                Object[] message = {
+                    "Student ID:", f1,
+                    "First Name:", f2,
+                    "Last Name:", f3,
+                    "Program:", f4,
+                    "Year:", f5,
+                    "Gender:", genderBox
+                };
+
+                int option = JOptionPane.showConfirmDialog(null, message, "Update Student", JOptionPane.OK_CANCEL_OPTION);
+                if (option == JOptionPane.OK_OPTION) {
+                    String selectedGender = (String) genderBox.getSelectedItem();
+                    String finalGender = selectedGender;
+
+                    if (selectedGender.equals("Other")) {
+                        String customGender = JOptionPane.showInputDialog(null, "Please specify your gender:", "Specify Gender", JOptionPane.QUESTION_MESSAGE);
+                        if (customGender != null && !customGender.trim().isEmpty()) {
+                            finalGender = customGender.trim();
+                        } else {
+                            finalGender = "Other"; 
+                        }
+                    }
+
+                    String newId = f1.getText().trim();
+                    String newFn = f2.getText().trim();
+                    String newLn = f3.getText().trim();
+                    String newPr = f4.getText().trim().toUpperCase();
+                    String newYr = f5.getText().trim();
+
+                    if (newId.isEmpty() || newFn.isEmpty() || newLn.isEmpty()) {
+                        JOptionPane.showMessageDialog(null, "Required fields cannot be empty!");
+                        return;
+                    }
+                    if (newFn.matches(".*\\d.*") || newLn.matches(".*\\d.*")) {
+                        JOptionPane.showMessageDialog(null, "Names cannot contain numbers!");
+                        return;
+                    }
+                    if (!newId.matches("^20([01]\\d|2[0-6])-(?!0000)\\d{4}$")) {
+                        JOptionPane.showMessageDialog(null, "Invalid ID format! Use 20XX-XXXX. The year also cannot exceed 2026 and ID cannot be 0000");
+                        return;
+                    }
+                    try {
+                        int yearVal = Integer.parseInt(newYr);
+                        if (yearVal < 1 || yearVal > 4) {
+                            JOptionPane.showMessageDialog(null, "Year must be 1-4!");
+                            return;
+                        }
+                    } catch (NumberFormatException ex) {
+                        JOptionPane.showMessageDialog(null, "Year must be a number!");
+                        return;
+                    }
+                    if (!isProgramValid(newPr)) {
+                        JOptionPane.showMessageDialog(null, "Program code '" + newPr + "' does not exist!");
+                        return;
+                    }
+
+                    model.setValueAt(newId, row, 0);
+                    model.setValueAt(newFn, row, 1);
+                    model.setValueAt(newLn, row, 2);
+                    model.setValueAt(newPr, row, 3);
+                    model.setValueAt(newYr, row, 4);
+                    model.setValueAt(finalGender, row, 5);
+                    
+                    updateStudentInfo(model);
+                    JOptionPane.showMessageDialog(null, "Student Updated Successfully");
                 }
             }
-        if (option == JOptionPane.OK_OPTION) {
-            String newId = f1.getText().trim();
-            String newFn = f2.getText().trim();
-            String newLn = f3.getText().trim();
-            String newPr = f4.getText().trim().toUpperCase();
-            String newYr = f5.getText().trim();
-
-            if (newId.isEmpty() || newFn.isEmpty() || newLn.isEmpty()) {
-                JOptionPane.showMessageDialog(null, "Required fields cannot be empty!");
-                return;
-            }
-            if (newFn.matches(".*\\d.*") || newLn.matches(".*\\d.*")) {
-                JOptionPane.showMessageDialog(null, "Names cannot contain numbers!");
-                return;
-            }
-            if (!newId.matches("^20([01]\\d|2[0-6])-(?!0000)\\d{4}$")) {
-                JOptionPane.showMessageDialog(null, "Invalid ID format! Use 20XX-XXXX. The year also cannot exceed 2026 and ID cannot be 0000");
-                return;
-            }
-            try {
-                int yearVal = Integer.parseInt(newYr);
-                if (yearVal < 1 || yearVal > 4) {
-                    JOptionPane.showMessageDialog(null, "Year must be 1-4!");
-                    return;
-                }
-            } catch (NumberFormatException ex) {
-                JOptionPane.showMessageDialog(null, "Year must be a number!");
-                return;
-            }
-            if (!isProgramValid(newPr)) {
-                JOptionPane.showMessageDialog(null, "Program code '" + newPr + "' does not exist!");
-                return;
-            }
-
-            model.setValueAt(newId, row, 0);
-            model.setValueAt(newFn, row, 1);
-            model.setValueAt(newLn, row, 2);
-            model.setValueAt(newPr, row, 3);
-            model.setValueAt(newYr, row, 4);
-            model.setValueAt(finalGender, row, 5);
-            
-            updateStudentInfo(model);
-            JOptionPane.showMessageDialog(null, "Student Updated Successfully");
-        }
-    }
-}}); 
+        }); 
 
         deleteStudent.addActionListener(e -> {
             int viewrow = table.getSelectedRow();
@@ -180,18 +180,20 @@ public class studenteditor extends AbstractCellEditor implements TableCellEditor
             JOptionPane.showMessageDialog(null, "Error updating CSV: " + ex.getMessage());
         }
     }
+    
     private boolean isProgramValid(String programCode) {
-    String line;
-    try (java.io.BufferedReader br = new java.io.BufferedReader(new java.io.FileReader("sourcecode/csvfiles/Program.csv"))) {
-        while ((line = br.readLine()) != null) {
-            String[] data = line.split(",");
-            if (data.length > 0 && data[0].equalsIgnoreCase(programCode)) {
-                return true; 
+        if (programCode.equalsIgnoreCase("NOT ENROLLED")) return true;
+        String line;
+        try (java.io.BufferedReader br = new java.io.BufferedReader(new java.io.FileReader("sourcecode/csvfiles/Program.csv"))) {
+            while ((line = br.readLine()) != null) {
+                String[] data = line.split(",");
+                if (data.length > 0 && data[0].equalsIgnoreCase(programCode)) {
+                    return true; 
+                }
             }
+        } catch (java.io.IOException e) {
+            return false; 
         }
-    } catch (java.io.IOException e) {
-        return false; 
+        return false;
     }
-    return false;
-}
 }

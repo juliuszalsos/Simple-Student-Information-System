@@ -8,157 +8,157 @@ import java.io.*;
 public class programeditor extends AbstractCellEditor implements TableCellEditor, TableCellRenderer {
     private JPanel panel = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, 0));
     private JButton editButton = new JButton("...");
+    private JTable parentTable;
 
     public programeditor(JTable table, DefaultTableModel model) {
+        this.parentTable = table;
         editButton.setFont(new Font("Segoe UI", Font.BOLD, 18));
         editButton.setPreferredSize(new Dimension(30, 30));
         editButton.setBorderPainted(false);
         editButton.setContentAreaFilled(false);
         editButton.setFocusPainted(false);
-        editButton.setMargin(new Insets(0, 0, 0, 0));
         panel.add(editButton);
 
         JPopupMenu menu = new JPopupMenu();
         JMenuItem deleteProgram = new JMenuItem("Delete Program");
         JMenuItem updateProgram = new JMenuItem("Update Information");
 
+        // --- UPDATE PROGRAM ---
         updateProgram.addActionListener(e -> {
-            int viewrow = table.getSelectedRow();
+            int viewrow = parentTable.getSelectedRow();
             if (viewrow != -1) {
-                int row = table.convertRowIndexToModel(viewrow);
-                String oldPCode = model.getValueAt(row, 0).toString();
-                String pname = model.getValueAt(row, 1).toString();
-                String ccode = model.getValueAt(row, 2).toString();
+                int row = parentTable.convertRowIndexToModel(viewrow);
+                String oldPCode = model.getValueAt(row, 0).toString().trim().toUpperCase();
+                String oldPName = model.getValueAt(row, 1).toString().trim();
+                String currentCCode = model.getValueAt(row, 2).toString().trim().toUpperCase();
 
                 JTextField f1 = new JTextField(oldPCode);
-                JTextField f2 = new JTextField(pname);
-                JTextField f3 = new JTextField(ccode); 
-
-                Object[] message = {
-                    "Program Code:", f1,
-                    "Program Name:", f2,
-                    "College Code:", f3
-                };
+                JTextField f2 = new JTextField(oldPName);
+                JTextField f3 = new JTextField(currentCCode);
+                Object[] message = {"Program Code:", f1, "Program Name:", f2, "College Code:", f3};
 
                 int option = JOptionPane.showConfirmDialog(null, message, "Update Program", JOptionPane.OK_CANCEL_OPTION);
                 if (option == JOptionPane.OK_OPTION) {
-                    String updatedPCode = f1.getText().trim().toUpperCase();
-                    String updatedPName = f2.getText().trim();
-                    String updatedCCode = f3.getText().trim().toUpperCase();
+                    String newPCode = f1.getText().trim().toUpperCase();
+                    String newPName = f2.getText().trim();
+                    String newCCode = f3.getText().trim().toUpperCase();
 
-                    if (updatedPCode.isEmpty() || updatedPName.isEmpty() || updatedCCode.isEmpty()) {
-                        JOptionPane.showMessageDialog(null, "Fields cannot be empty!");
+                    if (newPCode.isEmpty() || newPName.isEmpty() || newCCode.isEmpty()) return;
+
+                    if (!newPCode.equals(oldPCode) && doesProgramCodeExist(newPCode)) {
+                        JOptionPane.showMessageDialog(null, "Program code already exists", "Error", JOptionPane.ERROR_MESSAGE);
                         return;
                     }
 
-                    if (!isCollegeValid(updatedCCode)) {
-                        JOptionPane.showMessageDialog(null, "College Code '" + updatedCCode + "' does not exist!");
-                        return;
-                    }
-
-                    model.setValueAt(updatedPCode, row, 0);
-                    model.setValueAt(updatedPName, row, 1);
-                    model.setValueAt(updatedCCode, row, 2);
+                    fireEditingStopped();
+                    model.setValueAt(newPCode, row, 0);
+                    model.setValueAt(newPName, row, 1);
+                    model.setValueAt(newCCode, row, 2);
                     
-                    updateProgramInfo(model);
-
-                    if (!oldPCode.equalsIgnoreCase(updatedPCode)) {
-                        cascadeUpdateStudents(oldPCode, updatedPCode);
-                    }
+                    updateProgramCSV(model);
+                    cascadeUpdateStudentsCSV(oldPCode, newPCode);
                     
-                    JOptionPane.showMessageDialog(null, "Program Updated Successfully");
+                    refreshOtherTabs();
+
+                    JOptionPane.showMessageDialog(null, "Program updated and cascaded to students successfully.");
                 }
             }
         });
 
+        // --- DELETE PROGRAM ---
         deleteProgram.addActionListener(e -> {
-            int viewrow = table.getSelectedRow();
+            int viewrow = parentTable.getSelectedRow();
             if (viewrow != -1) {
-                int row = table.convertRowIndexToModel(viewrow);    
+                int row = parentTable.convertRowIndexToModel(viewrow);
+                
                 int confirm = JOptionPane.showConfirmDialog(null, 
-                    "Are you sure? This program will be removed.\n" +
-                    "Related students will be hidden from the list.", 
-                    "Confirm Delete", JOptionPane.YES_NO_OPTION);
+                    "Delete this Program? Students under it will show NOT ENROLLED unless it is added back.", "Confirm Delete", JOptionPane.YES_NO_OPTION);
                 
                 if (confirm == JOptionPane.YES_OPTION) {
+                    fireEditingStopped();
                     model.removeRow(row);
-                    updateProgramInfo(model); 
-                    JOptionPane.showMessageDialog(null, "Program Removed. Related students are now hidden.");
+                    updateProgramCSV(model);
+                    
+                    refreshOtherTabs();
+                    
+                    JOptionPane.showMessageDialog(null, "Program removed successfully.");
                 }
             }
         });
 
         menu.add(updateProgram);
         menu.add(deleteProgram);
-
-        editButton.addActionListener(e -> {
-            menu.show(editButton, editButton.getWidth() / 2, editButton.getHeight() / 2);
-        });
+        editButton.addActionListener(e -> menu.show(editButton, editButton.getWidth() / 2, editButton.getHeight() / 2));
     }
 
-    private void cascadeUpdateStudents(String oldPCode, String newPCode) {
+    private boolean doesProgramCodeExist(String code) {
+        File file = new File("sourcecode/csvfiles/Program.csv");
+        if (!file.exists()) return false;
+        try (BufferedReader br = new BufferedReader(new FileReader(file))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                if (line.trim().isEmpty()) continue;
+                String[] data = line.split(",");
+                if (data.length > 0 && data[0].trim().toUpperCase().equals(code)) return true;
+            }
+        } catch (IOException e) { e.printStackTrace(); }
+        return false;
+    }
+
+    private void cascadeUpdateStudentsCSV(String oldPCode, String newPCode) {
+        if (oldPCode.equalsIgnoreCase(newPCode)) return;
         File inputFile = new File("sourcecode/csvfiles/Student.csv");
         File tempFile = new File("sourcecode/csvfiles/Student_temp.csv");
 
         try (BufferedReader br = new BufferedReader(new FileReader(inputFile));
              PrintWriter pw = new PrintWriter(new FileWriter(tempFile))) {
-            
             String line;
             while ((line = br.readLine()) != null) {
+                if (line.trim().isEmpty()) continue;
                 String[] data = line.split(",");
-                if (data.length > 3 && data[3].equalsIgnoreCase(oldPCode)) {
+                if (data.length >= 4 && data[3].trim().toUpperCase().equals(oldPCode)) {
                     data[3] = newPCode;
-                    pw.println(String.join(",", data));
-                } else {
-                    pw.println(line);
                 }
+                pw.println(String.join(",", data));
             }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        
-        if (inputFile.delete()) {
-            tempFile.renameTo(inputFile);
-        }
+        } catch (IOException e) { e.printStackTrace(); }
+
+        if (inputFile.exists()) inputFile.delete();
+        tempFile.renameTo(inputFile);
     }
 
-    private boolean isCollegeValid(String collegeCode) {
-        try (BufferedReader br = new BufferedReader(new FileReader("sourcecode/csvfiles/College.csv"))) {
-            String line;
-            while ((line = br.readLine()) != null) {
-                String[] data = line.split(",");
-                if (data.length > 0 && data[0].equalsIgnoreCase(collegeCode)) return true;
-            }
-        } catch (IOException e) {
-            return false;
-        }
-        return false;
-    }
-
-    private void updateProgramInfo(DefaultTableModel model) {
-        try (PrintWriter out = new PrintWriter(new FileWriter("sourcecode/csvfiles/Program.csv"))) {
+    private void updateProgramCSV(DefaultTableModel model) {
+        File file = new File("sourcecode/csvfiles/Program.csv");
+        try (PrintWriter out = new PrintWriter(new FileWriter(file))) {
             for (int i = 0; i < model.getRowCount(); i++) {
-                out.println(model.getValueAt(i, 0).toString() + "," + 
-                            model.getValueAt(i, 1).toString() + "," + 
-                            model.getValueAt(i, 2).toString());
+                out.println(model.getValueAt(i, 0).toString().trim().toUpperCase() + "," + 
+                            model.getValueAt(i, 1).toString().trim() + "," +
+                            model.getValueAt(i, 2).toString().trim().toUpperCase());
             }
-        } catch (IOException ex) {
-            JOptionPane.showMessageDialog(null, "Error updating CSV: " + ex.getMessage());
+        } catch (IOException ex) { ex.printStackTrace(); }
+    }
+
+    private void refreshOtherTabs() {
+        Window topWindow = SwingUtilities.getWindowAncestor(parentTable);
+        if (topWindow instanceof JFrame) {
+            JFrame mainFrame = (JFrame) topWindow;
+            refreshChildPanels(mainFrame.getContentPane());
         }
     }
 
-    @Override
-    public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-        panel.setBackground(isSelected ? table.getSelectionBackground() : table.getBackground());
-        return panel;
+    private void refreshChildPanels(Container container) {
+        for (Component comp : container.getComponents()) {
+            if (comp instanceof studentinterface) {
+                ((studentinterface) comp).loadData();
+            } else if (comp instanceof programinterface) {
+                ((programinterface) comp).loadData();
+            } else if (comp instanceof Container) {
+                refreshChildPanels((Container) comp);
+            }
+        }
     }
 
-    @Override
-    public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
-        panel.setBackground(table.getSelectionBackground());
-        return panel;
-    }
-
-    @Override
-    public Object getCellEditorValue() { return ""; }
+    @Override public Component getTableCellRendererComponent(JTable t, Object v, boolean s, boolean f, int r, int c) { return panel; }
+    @Override public Component getTableCellEditorComponent(JTable t, Object v, boolean s, int r, int c) { return panel; }
+    @Override public Object getCellEditorValue() { return ""; }
 }

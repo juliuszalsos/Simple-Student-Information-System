@@ -6,7 +6,6 @@ import javax.swing.table.*;
 import java.awt.*;
 import java.io.*;
 import java.util.HashSet;
-import java.util.Set;
 
 public class programinterface extends JPanel {
     private JTextField tfPCode, tfPName, tfCCode;
@@ -27,11 +26,9 @@ public class programinterface extends JPanel {
         String[] columns = {"Program Code", "Program Name", "College Code", ""};
         tablemodel1 = new DefaultTableModel(columns, 0);
         programTable = new JTable(tablemodel1);
-        
         programTable.setRowHeight(32);
         programTable.setShowGrid(true);
         programTable.setGridColor(GRID_COLOR);
-        programTable.setSelectionBackground(new Color(210, 230, 250));
         programTable.setFont(new Font("Segoe UI", Font.PLAIN, 12));
 
         JTableHeader header = programTable.getTableHeader();
@@ -48,78 +45,56 @@ public class programinterface extends JPanel {
 
         JPanel searchPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 15, 8));
         searchPanel.setBackground(PRIMARY_NAVY);
-        
         JLabel searchLabel = new JLabel("Search Program: ");
         searchLabel.setForeground(Color.WHITE);
-        searchLabel.setFont(new Font("Segoe UI", Font.BOLD, 12));
-
         tfSearch = new JTextField(20);
-        tfSearch.setBorder(BorderFactory.createCompoundBorder(
-                new LineBorder(ACCENT_BLUE, 1), 
-                BorderFactory.createEmptyBorder(3, 5, 3, 5)));
-
         searchPanel.add(searchLabel);
         searchPanel.add(tfSearch);
 
-        JPanel addProgram = new JPanel(new BorderLayout());
-        addProgram.setBackground(Color.WHITE);
-        addProgram.setBorder(new MatteBorder(2, 0, 0, 0, PRIMARY_NAVY));
+        JPanel createPanel = new JPanel(new BorderLayout());
+        createPanel.setBackground(Color.WHITE);
+        createPanel.setBorder(new MatteBorder(2, 0, 0, 0, PRIMARY_NAVY));
 
-        JLabel titleLabel = new JLabel("ADD YOUR PROGRAM");
+        JLabel titleLabel = new JLabel("ADD NEW PROGRAM");
         titleLabel.setFont(new Font("Segoe UI", Font.BOLD, 15));
         titleLabel.setForeground(PRIMARY_NAVY);
         titleLabel.setBorder(BorderFactory.createEmptyBorder(8, 20, 5, 0));
-        addProgram.add(titleLabel, BorderLayout.NORTH);
+        createPanel.add(titleLabel, BorderLayout.NORTH);
 
         JPanel formContainer = new JPanel();
         formContainer.setLayout(new BoxLayout(formContainer, BoxLayout.Y_AXIS));
         formContainer.setBackground(Color.WHITE);
         formContainer.setBorder(BorderFactory.createEmptyBorder(5, 20, 10, 20));
 
-        JPanel gridPanel = new JPanel(new GridLayout(1, 4, 15, 0));
-        gridPanel.setOpaque(false);
-
+        JPanel grid = new JPanel(new GridLayout(1, 3, 15, 0));
+        grid.setOpaque(false);
         tfPCode = createStyledField("Program Code:");
         tfPName = createStyledField("Program Name:");
         tfCCode = createStyledField("College Code:");
-
-        gridPanel.add(tfPCode.getParent());
-        gridPanel.add(tfPName.getParent());
-        gridPanel.add(tfCCode.getParent());
-        gridPanel.add(new JPanel() {{ setOpaque(false); }});
+        grid.add(tfPCode.getParent());
+        grid.add(tfPName.getParent());
+        grid.add(tfCCode.getParent());
 
         JPanel btnPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 0, 8));
         btnPanel.setOpaque(false);
         JButton addButton = new JButton("Add Program");
         addButton.setBackground(ACCENT_BLUE);
         addButton.setForeground(Color.WHITE);
-        addButton.setFont(new Font("Segoe UI", Font.BOLD, 12));
-        addButton.setFocusPainted(false);
-        addButton.setPreferredSize(new Dimension(140, 30));
+        addButton.setPreferredSize(new Dimension(130, 30));
         btnPanel.add(addButton);
 
-        formContainer.add(gridPanel);
+        formContainer.add(grid);
         formContainer.add(btnPanel);
-        addProgram.add(formContainer, BorderLayout.CENTER);
+        createPanel.add(formContainer, BorderLayout.CENTER);
 
         JScrollPane scrollPane = new JScrollPane(programTable);
-        scrollPane.setBorder(new LineBorder(GRID_COLOR));
-        JPanel tableContainer = new JPanel(new BorderLayout());
-        tableContainer.add(searchPanel, BorderLayout.NORTH);
-        tableContainer.add(scrollPane, BorderLayout.CENTER);
+        JPanel listPanel = new JPanel(new BorderLayout());
+        listPanel.add(searchPanel, BorderLayout.NORTH);
+        listPanel.add(scrollPane, BorderLayout.CENTER);
 
-        JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, tableContainer, addProgram);
+        JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, listPanel, createPanel);
         splitPane.setResizeWeight(0.85);
-        splitPane.setDividerSize(4);
-        splitPane.setBorder(null);
-
         this.add(splitPane, BorderLayout.CENTER);
-
-        this.addHierarchyListener(e -> {
-            if ((e.getChangeFlags() & java.awt.event.HierarchyEvent.SHOWING_CHANGED) != 0 && isShowing()) {
-                loadData();
-            }
-        });
 
         setupLogic(addButton);
         loadData();
@@ -130,11 +105,8 @@ public class programinterface extends JPanel {
         group.setOpaque(false);
         JLabel label = new JLabel(labelText);
         label.setFont(new Font("Segoe UI", Font.BOLD, 11));
-        label.setForeground(PRIMARY_NAVY);
         JTextField field = new JTextField();
-        field.setFont(new Font("Segoe UI", Font.PLAIN, 11));
         field.setPreferredSize(new Dimension(0, 25));
-        field.setBorder(BorderFactory.createCompoundBorder(new LineBorder(GRID_COLOR, 1), BorderFactory.createEmptyBorder(1, 4, 1, 4)));
         group.add(label, BorderLayout.NORTH);
         group.add(field, BorderLayout.CENTER);
         return field;
@@ -158,8 +130,10 @@ public class programinterface extends JPanel {
             String pname = tfPName.getText().trim();
             String ccode = tfCCode.getText().trim().toUpperCase();
 
-            if (pcode.isEmpty() || pname.isEmpty() || ccode.isEmpty()) {
-                JOptionPane.showMessageDialog(null, "Please fill in all fields!");
+            if (pcode.isEmpty() || pname.isEmpty() || ccode.isEmpty()) return;
+
+            if (doesProgramExist(pcode)) {
+                JOptionPane.showMessageDialog(this, "This program already exists", "Error", JOptionPane.ERROR_MESSAGE);
                 return;
             }
 
@@ -168,39 +142,62 @@ public class programinterface extends JPanel {
         });
     }
 
+    private boolean doesProgramExist(String pcode) {
+        File file = new File("sourcecode/csvfiles/Program.csv");
+        if (!file.exists()) return false;
+        try (BufferedReader br = new BufferedReader(new FileReader(file))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                if (line.trim().isEmpty()) continue;
+                String[] data = line.split(",");
+                if (data.length > 0 && data[0].trim().toUpperCase().equals(pcode)) {
+                    return true;
+                }
+            }
+        } catch (IOException e) { e.printStackTrace(); }
+        return false;
+    }
+
     private void saveData(String pcode, String pname, String ccode) {
         try (PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter("sourcecode/csvfiles/Program.csv", true)))) {
             out.println(pcode + "," + pname + "," + ccode);
             JOptionPane.showMessageDialog(null, "Program Added Successfully!");
             tfPCode.setText(""); tfPName.setText(""); tfCCode.setText("");
-        } catch (IOException e) {
-            JOptionPane.showMessageDialog(null, "Error saving: " + e.getMessage());
-        }
+        } catch (IOException e) { e.printStackTrace(); }
     }
 
     public void loadData() {
         tablemodel1.setRowCount(0);
-        Set<String> validColleges = new HashSet<>();
+        
+        HashSet<String> activeColleges = new HashSet<>();
+        File collegeFile = new File("sourcecode/csvfiles/College.csv");
+        if (collegeFile.exists()) {
+            try (BufferedReader br = new BufferedReader(new FileReader(collegeFile))) {
+                String line;
+                while ((line = br.readLine()) != null) {
+                    if (line.trim().isEmpty()) continue;
+                    String[] data = line.split(",");
+                    if (data.length > 0) activeColleges.add(data[0].trim().toUpperCase());
+                }
+            } catch (IOException e) { e.printStackTrace(); }
+        }
 
-        try (BufferedReader brC = new BufferedReader(new FileReader("sourcecode/csvfiles/College.csv"))) {
-            String line;
-            while ((line = brC.readLine()) != null) {
-                String[] data = line.split(",");
-                if (data.length > 0) validColleges.add(data[0].trim().toUpperCase());
-            }
-        } catch (IOException e) { }
+        File programFile = new File("sourcecode/csvfiles/Program.csv");
+        if (!programFile.exists()) return;
 
-               try (BufferedReader brP = new BufferedReader(new FileReader("sourcecode/csvfiles/Program.csv"))) {
+        try (BufferedReader br = new BufferedReader(new FileReader(programFile))) {
             String line;
-            while ((line = brP.readLine()) != null) {
+            while ((line = br.readLine()) != null) {
+                if (line.trim().isEmpty()) continue;
                 String[] data = line.split(",");
                 if (data.length >= 3) {
-                    String collegeRef = data[2].trim().toUpperCase();
-                    if (validColleges.contains(collegeRef)) {
-                        tablemodel1.addRow(new Object[]{data[0], data[1], data[2], ""});
-                    }
+                    String targetCollege = data[2].trim().toUpperCase();
+                    // Dynamically displays "NULL" if the code isn't in College.csv.
+                    // If it is added back, it shows the code normally.
+                    String displayedCollege = activeColleges.contains(targetCollege) ? data[2].trim() : "NULL";
+                    tablemodel1.addRow(new Object[]{data[0].trim(), data[1].trim(), displayedCollege, ""});
                 }
             }
-        } catch (IOException e) { }
+        } catch (IOException e) { e.printStackTrace(); }
     }
 }

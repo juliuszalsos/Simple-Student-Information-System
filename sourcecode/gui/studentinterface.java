@@ -6,7 +6,6 @@ import javax.swing.table.*;
 import java.awt.*;
 import java.io.*;
 import java.util.HashSet;
-import java.util.Set;
 
 public class studentinterface extends JPanel {
     private JTextField tfId, tfFirstName, tfLastName, tfProgram, tfYear;
@@ -79,27 +78,28 @@ public class studentinterface extends JPanel {
         JPanel grid1 = new JPanel(new GridLayout(1, 6, 10, 0));
         grid1.setOpaque(false);
         
-        tfId = createStyledField("ID:");
-        tfFirstName = createStyledField("First Name:");
-        tfLastName = createStyledField("Last Name:");
-        tfProgram = createStyledField("Program:");
-        tfYear = createStyledField("Year:");
+        JPanel pId = createStyledFieldGroup("ID:", tfId = new JTextField());
+        JPanel pFN = createStyledFieldGroup("First Name:", tfFirstName = new JTextField());
+        JPanel pLN = createStyledFieldGroup("Last Name:", tfLastName = new JTextField());
+        JPanel pPR = createStyledFieldGroup("Program:", tfProgram = new JTextField());
+        JPanel pYR = createStyledFieldGroup("Year:", tfYear = new JTextField());
 
         JPanel genGroup = new JPanel(new BorderLayout(0, 2));
         genGroup.setOpaque(false);
         JLabel genLabel = new JLabel("Gender:");
         genLabel.setFont(new Font("Segoe UI", Font.BOLD, 11));
+        genLabel.setForeground(PRIMARY_NAVY);
         ddGender = new JComboBox<>(new String[]{"Male", "Female", "Other"});
         ddGender.setFont(new Font("Segoe UI", Font.PLAIN, 11));
         ddGender.setBackground(Color.WHITE);
         genGroup.add(genLabel, BorderLayout.NORTH);
         genGroup.add(ddGender, BorderLayout.CENTER);
 
-        grid1.add(tfId.getParent());
-        grid1.add(tfFirstName.getParent());
-        grid1.add(tfLastName.getParent());
-        grid1.add(tfProgram.getParent());
-        grid1.add(tfYear.getParent());
+        grid1.add(pId);
+        grid1.add(pFN);
+        grid1.add(pLN);
+        grid1.add(pPR);
+        grid1.add(pYR);
         grid1.add(genGroup);
 
         JPanel btnPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 0, 8));
@@ -128,6 +128,7 @@ public class studentinterface extends JPanel {
         splitPane.setBorder(null);
 
         this.add(splitPane, BorderLayout.CENTER);
+        
         this.addHierarchyListener(e -> {
             if ((e.getChangeFlags() & java.awt.event.HierarchyEvent.SHOWING_CHANGED) != 0 && isShowing()) {
                 loadData();
@@ -138,19 +139,23 @@ public class studentinterface extends JPanel {
         loadData();
     }
 
-    private JTextField createStyledField(String labelText) {
+    private JPanel createStyledFieldGroup(String labelText, JTextField field) {
         JPanel group = new JPanel(new BorderLayout(0, 2));
         group.setOpaque(false);
+        
         JLabel label = new JLabel(labelText);
         label.setFont(new Font("Segoe UI", Font.BOLD, 11));
         label.setForeground(PRIMARY_NAVY);
-        JTextField field = new JTextField();
+        
         field.setFont(new Font("Segoe UI", Font.PLAIN, 11));
         field.setPreferredSize(new Dimension(0, 25));
-        field.setBorder(BorderFactory.createCompoundBorder(new LineBorder(GRID_COLOR, 1), BorderFactory.createEmptyBorder(1, 4, 1, 4)));
+        field.setBorder(BorderFactory.createCompoundBorder(
+                new LineBorder(GRID_COLOR, 1), 
+                BorderFactory.createEmptyBorder(1, 4, 1, 4)));
+                
         group.add(label, BorderLayout.NORTH);
         group.add(field, BorderLayout.CENTER);
-        return field;
+        return group; 
     }
 
     private void setupLogic(JButton addButton) {
@@ -168,63 +173,87 @@ public class studentinterface extends JPanel {
 
         addButton.addActionListener(e -> {
             String id = tfId.getText().trim();
-            if (!id.matches("^20([01]\\d|2[0-6])-(?!0000)\\d{4}$")) {
-                JOptionPane.showMessageDialog(this, "Invalid ID! (Format: 20XX-XXXX)");
+            
+            if (!id.matches("^(201[7-9]|202[0-6])-(000[1-9]|00[1-9]\\d|0[1-9]\\d{2}|[1-2]\\d{3}|3000|4000)$")) {
+                JOptionPane.showMessageDialog(this, "Invalid ID Format! Use: YYYY-XXXX (Year: 2017-2026, Number: 0001-4000)");
                 return;
             }
+
+            if (doesStudentIDExist(id)) {
+                JOptionPane.showMessageDialog(this, "This student ID already exists", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
             saveData(id, tfFirstName.getText().trim(), tfLastName.getText().trim(), 
-                     tfProgram.getText().trim(), tfYear.getText().trim(), (String)ddGender.getSelectedItem());
+                     tfProgram.getText().trim().toUpperCase(), tfYear.getText().trim(), (String)ddGender.getSelectedItem());
             loadData();
         });
     }
 
+    private boolean doesStudentIDExist(String id) {
+        File file = new File("sourcecode/csvfiles/Student.csv");
+        if (!file.exists()) return false;
+        try (BufferedReader br = new BufferedReader(new FileReader(file))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                if (line.trim().isEmpty()) continue;
+                String[] data = line.split(",");
+                if (data.length > 0 && data[0].trim().equals(id)) {
+                    return true;
+                }
+            }
+        } catch (IOException e) { e.printStackTrace(); }
+        return false;
+    }
+
     private void saveData(String id, String fn, String ln, String pr, String yr, String gn) {
-        try (PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter("sourcecode/csvfiles/Student.csv", true)))) {
+        File csvFile = new File("sourcecode/csvfiles/Student.csv");
+        try (PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(csvFile, true)))) {
             out.println(id + "," + fn + "," + ln + "," + pr + "," + yr + "," + gn);
             JOptionPane.showMessageDialog(null, "Student Registered!");
             tfId.setText(""); tfFirstName.setText(""); tfLastName.setText("");
             tfProgram.setText(""); tfYear.setText("");
-        } catch (Exception e) { e.printStackTrace(); }
+        } catch (IOException e) { 
+            JOptionPane.showMessageDialog(this, "Error saving entry: " + e.getMessage());
+            e.printStackTrace(); 
+        }
     }
 
     public void loadData() {
         tablemodel.setRowCount(0);
-        Set<String> validColleges = new HashSet<>();
-        Set<String> validPrograms = new HashSet<>();
+        
+        HashSet<String> activePrograms = new HashSet<>();
+        File programFile = new File("sourcecode/csvfiles/Program.csv");
+        if (programFile.exists()) {
+            try (BufferedReader br = new BufferedReader(new FileReader(programFile))) {
+                String line;
+                while ((line = br.readLine()) != null) {
+                    if (line.trim().isEmpty()) continue;
+                    String[] data = line.split(",");
+                    if (data.length > 0) activePrograms.add(data[0].trim().toUpperCase());
+                }
+            } catch (IOException e) { e.printStackTrace(); }
+        }
 
-        try (BufferedReader brC = new BufferedReader(new FileReader("sourcecode/csvfiles/College.csv"))) {
-            String line;
-            while ((line = brC.readLine()) != null) {
-                String[] data = line.split(",");
-                if (data.length > 0) validColleges.add(data[0].trim().toUpperCase());
-            }
-        } catch (IOException e) { }
+        File studentFile = new File("sourcecode/csvfiles/Student.csv");
+        if (!studentFile.exists()) return;
 
-        try (BufferedReader brP = new BufferedReader(new FileReader("sourcecode/csvfiles/Program.csv"))) {
+        try (BufferedReader br = new BufferedReader(new FileReader(studentFile))) {
             String line;
-            while ((line = brP.readLine()) != null) {
+            while ((line = br.readLine()) != null) {
+                if (line.trim().isEmpty()) continue; 
                 String[] data = line.split(",");
-                if (data.length >= 3) {
-                    String pCode = data[0].trim().toUpperCase();
-                    String cRef = data[2].trim().toUpperCase();
-                    if (validColleges.contains(cRef)) {
-                        validPrograms.add(pCode);
-                    }
+                if (data.length >= 6) {
+                    String targetProg = data[3].trim().toUpperCase();
+                    // Dynamically displays "NOT ENROLLED" if the program isn't found in Program.csv.
+                    // If it gets added back, it displays the original program name normally.
+                    String displayedProgram = activePrograms.contains(targetProg) ? data[3].trim() : "NOT ENROLLED";
+                    tablemodel.addRow(new Object[]{
+                        data[0].trim(), data[1].trim(), data[2].trim(), 
+                        displayedProgram, data[4].trim(), data[5].trim(), ""
+                    });
                 }
             }
-        } catch (IOException e) { }
-
-            try (BufferedReader brS = new BufferedReader(new FileReader("sourcecode/csvfiles/Student.csv"))) {
-            String sLine;
-            while ((sLine = brS.readLine()) != null) {
-                String[] sData = sLine.split(",");
-                if (sData.length >= 6) {
-                    String studentProg = sData[3].trim().toUpperCase();
-                    if (validPrograms.contains(studentProg)) {
-                        tablemodel.addRow(new Object[]{sData[0], sData[1], sData[2], sData[3], sData[4], sData[5], ""});
-                    }
-                }
-            }
-        } catch (IOException e) { }
+        } catch (IOException e) { e.printStackTrace(); }
     }
 }
